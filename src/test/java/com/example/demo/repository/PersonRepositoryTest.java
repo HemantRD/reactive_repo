@@ -3,7 +3,10 @@ package com.example.demo.repository;
 import com.example.demo.model.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 class PersonRepositoryTest {
 
@@ -40,6 +43,25 @@ class PersonRepositoryTest {
     }
 
     @Test
-    void findAll() {
+    void fluxTestBlockFirst() {
+        Person personFlux = repository.findAll().blockFirst();
+        System.out.println(personFlux.getFirstName());
+    }
+
+    @Test
+    void testFluxSubscribe() {
+        Flux<Person> personFlux = repository.findAll();
+        personFlux.subscribe(person -> System.out.println(person.toString()));
+    }
+
+    @Test
+    void testFluxToMonoList() {
+        Flux<Person> personFlux = repository.findAll();
+        Mono<List<Person>> personMonoList = personFlux.collectList();
+        personMonoList.subscribe(list -> {
+            list.forEach(person -> {
+                System.out.println(person);
+            });
+        });
     }
 }
