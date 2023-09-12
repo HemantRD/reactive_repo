@@ -12,9 +12,6 @@ class PersonRepositoryTest {
     @BeforeEach
     void setUp() {
         repository = new PersonRepository();
-        if (repository == null) {
-            throw new RuntimeException("config error");
-        }
     }
 
     @Test
