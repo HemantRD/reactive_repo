@@ -93,8 +93,11 @@ class PersonRepositoryTest {
 
         final Integer id = 85;
         Mono<Person> personMono = personFlux.filter(r -> r.getId() == id).single();
-        personMono.subscribe(person -> {
-            System.out.println(person);
-        });
+        personMono.doOnError(throwable -> {
+                    System.out.println("Error Occurred..." + throwable.getMessage());
+                }).onErrorReturn(new Person())
+                .subscribe(person -> {
+                    System.out.println(person);
+                });
     }
 }
