@@ -1,17 +1,18 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Person {
     private Integer id;
     private String firstName;
     private String lastName;
+
+    public Person() {
+    }
+
+    public Person(Integer id, String firstName, String lastName) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public Integer getId() {
         return id;
