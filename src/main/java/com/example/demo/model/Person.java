@@ -1,7 +1,20 @@
 package com.example.demo.model;
 
 public class Person {
-    private Integer id;
+	
+	
+    public Person() {
+		super();
+	}
+
+	public Person(Integer id, String firstName, String lastName) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	private Integer id;
     private String firstName;
     private String lastName;
 
