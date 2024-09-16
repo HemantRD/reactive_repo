@@ -13,6 +13,7 @@ public class StreamChapter {
 
     // TODO implement and read SELF TEST again
     public static void main(String[] args) {
+        // taste of parallelStream
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
         int sum = list.stream().mapToInt(r -> r).sum();
         System.out.println(sum);
@@ -264,6 +265,7 @@ public class StreamChapter {
     }
 
     public static void main15(String[] args) {
+        // findAny method
         List<Dog> dogs = new ArrayList<>();
         Dog boi = new Dog("boi", 30, 6);
         Dog clover = new Dog("clover", 35, 12);
@@ -418,11 +420,13 @@ public class StreamChapter {
     }
 
     public static void main7(String args[]) {
+        //forEach method
         String[] dataArray = {"ABC", "PQR", "XYZ"};
         Arrays.stream(dataArray).filter(r -> r.startsWith("A") || r.startsWith("P")).filter(r -> r.length() > 2).forEach(System.out::println);
     }
 
     public static void main6(String args[]) throws Exception {
+        // read file and collect to list of object using stream
         String filePath = "/Users/hemantkumar.ghaydar/Documents/projects/alloy-recon copy/recon-service/src/main/java/com/apple/ist/alloy/stream/dvdinfo.txt";
         List<DvdInfo> dvdList = new ArrayList<>();
         try (Stream<String> files = Files.lines(Paths.get(filePath))) {
@@ -436,18 +440,21 @@ public class StreamChapter {
     }
 
     public static void main5(String[] args) {
+        // count in different ways
         String[] arr = {"ABC", "XYZ", "PQR"};
         System.out.println(Stream.of(arr).count());
         System.out.println(Arrays.stream(arr).count());
     }
 
     public static void main4(String[] args) {
+        // Stream.of method
         Integer[] arr = {1, 2, 3, 4};
         Stream<Integer> integerStream = Stream.of(arr);
         System.out.println(integerStream.filter(r -> r > 2).count());
     }
 
     public static void main3(String[] args) {
+        // Stream on Map
         Map<String, Integer> map = new HashMap<>();
         map.put("A", 10);
         map.put("B", 15);
