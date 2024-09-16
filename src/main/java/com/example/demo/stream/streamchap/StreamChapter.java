@@ -11,8 +11,18 @@ import java.util.stream.Stream;
 
 public class StreamChapter {
 
-    // TODO implement and read SELF TEST again
     public static void main(String[] args) {
+        // find duplicate number list
+        Stream<Integer> integerStream = Stream.of(2, 17, 5,
+                20, 17, 30,
+                4, 23, 59, 23);
+        Set<Integer> hashSet = new HashSet<>();
+        List<Integer> dataList = integerStream.filter(r -> !hashSet.add(r)).collect(Collectors.toCollection(() -> new ArrayList<>()));
+        System.out.println(dataList);
+    }
+
+    // TODO implement and read SELF TEST again
+    public static void main26(String[] args) {
         // taste of parallelStream
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
         int sum = list.stream().mapToInt(r -> r).sum();
