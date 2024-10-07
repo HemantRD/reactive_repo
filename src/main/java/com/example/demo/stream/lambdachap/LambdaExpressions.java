@@ -281,6 +281,7 @@ public class LambdaExpressions {
     }
 
     public static void main1(String[] args) {
+        // passing lambda as method argument
         Dog boi = new Dog("boi", 30, 6);
         DogQuerier dq = d -> d.getAge() > 10;
         DogQuerier dq4 = (d) -> d.getAge() > 10;
