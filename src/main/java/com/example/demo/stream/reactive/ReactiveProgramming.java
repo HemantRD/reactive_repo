@@ -10,6 +10,7 @@ import rx.observables.ConnectableObservable;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,27 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        // passing lambda to method
+        List<Integer> numbers = new ArrayList<>();
+        List<Integer> mapped = map(numbers, value -> value * value);
+
+        // giving type in lambda
+        Mapper<Integer, Integer> square = (Integer value) -> value * value;
+    }
+
+    interface Mapper<V, M> {
+        M map(V value);
+    }
+
+    public static <V, M> List<M> map(List<V> list, Mapper<V, M> mapper) {
+        List<M> mapped = new ArrayList<M>(list.size());
+        for (V v : list) {
+            mapped.add(mapper.map(v));
+        }
+        return mapped;
+    }
+
+    public static void main2(String[] args) {
         // reactive sum
         ConnectableObservable<String> input = from(System.in);
 
