@@ -136,11 +136,15 @@ public class ReactiveProgramming {
 
         public ReactiveSum(Observable<Double> a, Observable<Double> b) {
             this.sum = 0;
-            Observable.combineLatest(a, b, new Func2<Double, Double, Double>() { // (5)
-                public Double call(Double a, Double b) {
-                    return a + b;
-                }
-            }).subscribe(this); // (6)
+            // with lambda
+            Observable.combineLatest(a, b, (z, j) -> z + j).subscribe(this); // (6)
+
+//            // without lambda
+//            Observable.combineLatest(a, b, new Func2<Double, Double, Double>() { // (5)
+//                public Double call(Double a, Double b) {
+//                    return a + b;
+//                }
+//            }).subscribe(this); // (6)
         }
 
         public void onCompleted() {
