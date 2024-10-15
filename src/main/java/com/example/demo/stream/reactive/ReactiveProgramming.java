@@ -105,22 +105,30 @@ public class ReactiveProgramming {
     public static Observable<Double> varStream(final String varName, Observable<String> input) {
         final Pattern pattern = Pattern.compile("^\\s*" + varName
                 + "\\s*[:|=]\\s*(-?\\d+\\.?\\d*)$");
-        return input.map(new Func1<String, Matcher>() {
-            @Override
-            public Matcher call(String str) {
-                return pattern.matcher(str); // (2)
-            }
-        }).filter(new Func1<Matcher, Boolean>() {
-            @Override
-            public Boolean call(Matcher matcher) {
-                return matcher.matches() && matcher.group(1) != null; // (3)
-            }
-        }).map(new Func1<Matcher, Double>() {
-            @Override
-            public Double call(Matcher matcher) {
-                return Double.parseDouble(matcher.group(1)); // (4)
-            }
-        });
+        // below code with lamdba
+        return input.map(pattern::matcher)
+                .filter((matcher) -> matcher.matches() && matcher.group(1) != null)
+                .map(matcher -> matcher.group(1))
+                .map(Double::parseDouble);
+        // below code without lamdba
+//        final Pattern pattern = Pattern.compile("^\\s*" + varName
+//                + "\\s*[:|=]\\s*(-?\\d+\\.?\\d*)$");
+//        return input.map(new Func1<String, Matcher>() {
+//            @Override
+//            public Matcher call(String str) {
+//                return pattern.matcher(str); // (2)
+//            }
+//        }).filter(new Func1<Matcher, Boolean>() {
+//            @Override
+//            public Boolean call(Matcher matcher) {
+//                return matcher.matches() && matcher.group(1) != null; // (3)
+//            }
+//        }).map(new Func1<Matcher, Double>() {
+//            @Override
+//            public Double call(Matcher matcher) {
+//                return Double.parseDouble(matcher.group(1)); // (4)
+//            }
+//        });
     }
 
     public static final class ReactiveSum implements Observer<Double> { // (1)
