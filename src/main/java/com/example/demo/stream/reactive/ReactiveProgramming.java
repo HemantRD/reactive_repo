@@ -14,13 +14,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
-        // passing lambda to method
+        // passing lambda to method Consumer
+        Action<Integer> action = (s) -> System.out.println(" Value is ->" + s);
+        List<Integer> numbers = new ArrayList<>();
+        numbers.add(10);
+        numbers.add(20);
+        act(numbers, action);
+    }
+
+    public static void act(List<Integer> numbers, Action<Integer> mapped) {
+        for (Integer v : numbers) {
+            mapped.act(v);
+        }
+    }
+
+    interface Action<V> {
+        void act(V value);
+    }
+
+    public static void main3(String[] args) {
+        // passing lambda to method Function
         List<Integer> numbers = new ArrayList<>();
         List<Integer> mapped = map(numbers, value -> value * value);
 
