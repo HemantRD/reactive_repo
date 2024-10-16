@@ -19,6 +19,10 @@ public class ReactiveProgramming {
     public static void main(String[] args) {
         // higher order function
         System.out.println(highSum(v -> v * v, v -> v + v, 10, 20));
+
+        // higher order functions is to be flexible
+        Function<String, Integer> strToInt = s -> Integer.parseInt(s);
+        System.out.println(highSum(strToInt, strToInt, "4", "5"));
     }
 
     public static <T, R> int highSum(Function<T, Integer> f1, Function<R, Integer> f2, T data1, R data2) {
