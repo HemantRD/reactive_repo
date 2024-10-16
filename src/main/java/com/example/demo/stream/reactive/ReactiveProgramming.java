@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        // Functions like these can be used to implement different behaviors that have something in common. In object-oriented programming we define classes and
+        // then extend them, overloading their methods. In functional programming, we define higher order functions as interfaces and call them with different parameters, resulting in different behaviors.
         // function that return Function
         System.out.println(greet("Hello").apply("world"));
 
