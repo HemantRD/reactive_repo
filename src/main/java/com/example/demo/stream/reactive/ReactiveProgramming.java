@@ -17,6 +17,22 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        // function that return Function
+        System.out.println(greet("Hello").apply("world"));
+
+        System.out.println(greet("Goodbye").apply("cruel world"));
+
+        Function<String, String> howdy = greet("Howdy");
+
+        System.out.println(howdy.apply("Tanya"));
+        System.out.println(howdy.apply("Dali"));
+    }
+
+    public static Function<String, String> greet(String greeting) {
+        return (String name) -> greeting + " " + name + "!";
+    }
+
+    public static void main5(String[] args) {
         // higher order function
         System.out.println(highSum(v -> v * v, v -> v + v, 10, 20));
 
