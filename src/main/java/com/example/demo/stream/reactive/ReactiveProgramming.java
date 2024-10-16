@@ -1,10 +1,7 @@
 package com.example.demo.stream.reactive;
 
 import rx.Observable;
-import rx.Observer;
 import rx.Subscriber;
-import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.observables.ConnectableObservable;
 
 import java.io.BufferedReader;
@@ -14,14 +11,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        // higher order function
+        System.out.println(highSum(v -> v * v, v -> v + v, 10, 20));
+    }
+
+    public static <T, R> int highSum(Function<T, Integer> f1, Function<R, Integer> f2, T data1, R data2) {
+        return f1.apply(data1) + f2.apply(data2);
+    }
+
+    public static void main4(String[] args) {
         // passing lambda to method Consumer
         Action<Integer> action = (s) -> System.out.println(" Value is ->" + s);
         List<Integer> numbers = new ArrayList<>();
