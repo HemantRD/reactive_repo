@@ -131,13 +131,20 @@ public class ReactiveProgramming {
 //        });
     }
 
-    public static final class ReactiveSum implements Observer<Double> { // (1)
+    public static final class ReactiveSum { // (1)
         private double sum;
 
         public ReactiveSum(Observable<Double> a, Observable<Double> b) {
             this.sum = 0;
             // with lambda
-            Observable.combineLatest(a, b, (z, j) -> z + j).subscribe(this); // (6)
+            Observable.combineLatest(a, b, (z, j) -> z + j).subscribe(next -> {
+                this.sum = next;
+                System.out.println("update : a + b = " + sum); // (2)
+            }, e -> {
+                System.err.println("Got an error!"); // (3)
+                e.printStackTrace();
+
+            }, () -> System.out.println("Exiting last sum was :" + this.sum)); // (6)
 
 //            // without lambda
 //            Observable.combineLatest(a, b, new Func2<Double, Double, Double>() { // (5)
