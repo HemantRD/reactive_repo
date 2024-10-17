@@ -7,6 +7,10 @@ import rx.observables.ConnectableObservable;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -18,6 +22,25 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        //Observable.from (List)
+        List<String> list = Arrays.asList("blue", "red", "green", "yellow", "orange", "cyna", "purple");
+        Observable<String> listObservable = Observable.from(list);
+
+        listObservable.subscribe(System.out::println);
+        listObservable.subscribe(r ->
+                System.out.print(r + "|"), System.out::println, System.out::println);
+        
+        //Observable.from (Folder)
+        Path resources = Paths.get("src", "main", "resources");
+        try (DirectoryStream<Path> dStream = Files.newDirectoryStream(resources)) {
+            Observable<Path> dirObservable = Observable.from(dStream);
+            dirObservable.subscribe(System.out::println);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main6(String[] args) {
         // Functions like these can be used to implement different behaviors that have something in common. In object-oriented programming we define classes and
         // then extend them, overloading their methods. In functional programming, we define higher order functions as interfaces and call them with different parameters, resulting in different behaviors.
         // function that return Function
