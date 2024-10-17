@@ -113,27 +113,24 @@ public class ReactiveProgramming {
     }
 
     static ConnectableObservable<String> from(final BufferedReader reader) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                if (subscriber.isUnsubscribed()) {
-                    return;
-                }
-                try {
-                    String line;
-                    while (!subscriber.isUnsubscribed() &&
-                            (line = reader.readLine()) != null) {
-                        if (line == null || line.equalsIgnoreCase("exit")) {
-                            break;
-                        }
-                        subscriber.onNext(line);
+        return Observable.create((Observable.OnSubscribe<String>) subscriber -> {
+            if (subscriber.isUnsubscribed()) {
+                return;
+            }
+            try {
+                String line;
+                while (!subscriber.isUnsubscribed() &&
+                        (line = reader.readLine()) != null) {
+                    if (line == null || line.equalsIgnoreCase("exit")) {
+                        break;
                     }
-                } catch (Exception e) {
-                    subscriber.onError(e);
+                    subscriber.onNext(line);
                 }
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onCompleted();
-                }
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onCompleted();
             }
         }).publish();
     }
