@@ -47,6 +47,30 @@ public class ReactiveProgramming {
         numObservables.subscribe(n -> System.out.println(n), (r) -> {
         }, () -> System.out.println("Completed..."));
 
+        //Observable.just (single value/object)
+        Observable.just("10").subscribe(r -> System.out.println(r));
+        Observable.just("10", "20").subscribe(r -> System.out.println(r), (e) -> {
+        }, () -> System.out.println("Done"));
+
+        Observable.just(new User("La", "Mit")).map(r -> r.getFirstname() + " " + r.getLastname()).subscribe(System.out::println);
+    }
+
+    private static class User {
+        private final String firstname;
+        private final String lastname;
+
+        public User(String firstname, String lastname) {
+            this.firstname = firstname;
+            this.lastname = lastname;
+        }
+
+        public String getFirstname() {
+            return firstname;
+        }
+
+        public String getLastname() {
+            return lastname;
+        }
     }
 
     public static void main6(String[] args) {
