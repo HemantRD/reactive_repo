@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -89,12 +90,21 @@ public class ReactiveProgramming {
 
     public static void main2(String[] args) {
         // reactive sum
+        AtomicInteger sum = new AtomicInteger(0);
         ConnectableObservable<String> input = from(System.in);
 
         Observable<Double> a = varStream("a", input);
         Observable<Double> b = varStream("b", input);
 
-        ReactiveSum sum = new ReactiveSum(a, b);
+        Observable.combineLatest(a, b, (z, j) -> z + j).subscribe(next -> {
+            sum.set(next.intValue());
+            System.out.println("update : a + b = " + sum); // (2)
+        }, e -> {
+            System.err.println("Got an error!"); // (3)
+            e.printStackTrace();
+
+        }, () -> System.out.println("Exiting last sum was :" + sum)); // (6)
+
         input.connect();
     }
 
@@ -157,43 +167,6 @@ public class ReactiveProgramming {
 //        });
     }
 
-    public static final class ReactiveSum { // (1)
-        private double sum;
-
-        public ReactiveSum(Observable<Double> a, Observable<Double> b) {
-            this.sum = 0;
-            // with lambda
-            Observable.combineLatest(a, b, (z, j) -> z + j).subscribe(next -> {
-                this.sum = next;
-                System.out.println("update : a + b = " + sum); // (2)
-            }, e -> {
-                System.err.println("Got an error!"); // (3)
-                e.printStackTrace();
-
-            }, () -> System.out.println("Exiting last sum was :" + this.sum)); // (6)
-
-//            // without lambda
-//            Observable.combineLatest(a, b, new Func2<Double, Double, Double>() { // (5)
-//                public Double call(Double a, Double b) {
-//                    return a + b;
-//                }
-//            }).subscribe(this); // (6)
-        }
-
-        public void onCompleted() {
-            System.out.println("Exiting last sum was :" + this.sum); // (4)
-        }
-
-        public void onError(Throwable e) {
-            System.err.println("Got an error!"); // (3)
-            e.printStackTrace();
-        }
-
-        public void onNext(Double sum) {
-            this.sum = sum;
-            System.out.println("update : a + b = " + sum); // (2)
-        }
-    }
 
     public static void main1(String[] args) {
         // older way
