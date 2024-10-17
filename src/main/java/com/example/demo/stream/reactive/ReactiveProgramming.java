@@ -29,15 +29,24 @@ public class ReactiveProgramming {
         listObservable.subscribe(System.out::println);
         listObservable.subscribe(r ->
                 System.out.print(r + "|"), System.out::println, System.out::println);
-        
+
         //Observable.from (Folder)
         Path resources = Paths.get("src", "main", "resources");
         try (DirectoryStream<Path> dStream = Files.newDirectoryStream(resources)) {
             Observable<Path> dirObservable = Observable.from(dStream);
             dirObservable.subscribe(System.out::println);
+            // below will fail because iterator() method of the DirectoryStream parameter can be called only once.
+            // dirObservable.subscribe(System.out::println);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //Observable.from (Array)
+        Integer[] numbers = {1, 2, 3, 4, 5};
+        Observable<Integer> numObservables = Observable.from(numbers);
+        numObservables.subscribe(n -> System.out.println(n), (r) -> {
+        }, () -> System.out.println("Completed..."));
+
     }
 
     public static void main6(String[] args) {
