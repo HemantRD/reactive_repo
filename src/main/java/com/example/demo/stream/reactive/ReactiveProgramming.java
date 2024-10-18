@@ -1,7 +1,7 @@
 package com.example.demo.stream.reactive;
 
 import rx.Observable;
-import rx.Subscriber;
+import rx.Subscription;
 import rx.observables.ConnectableObservable;
 
 import java.io.BufferedReader;
@@ -15,13 +15,41 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        // different kind of observables
+        subcribePrint(Observable.interval(500L, TimeUnit.MILLISECONDS), "Interval Observable");
+
+        subcribePrint(Observable.timer(0L, 2L, TimeUnit.SECONDS), "Timed Interval Observable");
+
+        subcribePrint(Observable.timer(2L, TimeUnit.SECONDS), "Timer Observable");
+
+        subcribePrint(Observable.error(new Exception("Test Error!")), "Error Observable");
+
+        subcribePrint(Observable.empty(), "Empty Observable");
+
+        subcribePrint(Observable.never(), "Never Observable");
+
+        subcribePrint(Observable.range(1, 3), "Range Observable");
+
+        Thread.sleep(3000L);
+    }
+
+    static <T> Subscription subcribePrint(Observable<T> observable, String name) {
+        return observable.subscribe((v) -> System.out.println(name + " :" + v),
+                (e) -> {
+                    System.err.println("Error from " + name + ":");
+                    System.err.println(e.getMessage());
+                }, () -> System.out.println(name + " ended!"));
+    }
+
+    public static void main7(String[] args) {
         //Observable.from (List)
         List<String> list = Arrays.asList("blue", "red", "green", "yellow", "orange", "cyna", "purple");
         Observable<String> listObservable = Observable.from(list);
