@@ -1,8 +1,10 @@
 package com.example.demo.stream.reactive;
 
 import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.observables.ConnectableObservable;
+import rx.schedulers.Schedulers;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -23,6 +25,47 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) throws Exception {
+        // unsubscribe from main thread example
+        Path path = Paths.get("src", "main", "resources", "lorem_big.txt");
+        List<String> data = Files.readAllLines(path);
+        Observable<String> observable = fromIterable(data).subscribeOn(Schedulers.computation());
+        Subscription subscription = subcribePrint(observable, "File");
+
+        System.out.println("Before unsubscribe!");
+        System.out.println("-------------------");
+        Thread.sleep(5000);
+        subscription.unsubscribe();
+        System.out.println("-------------------");
+        System.out.println("After unsubscribe");
+
+    }
+
+    static <T> Observable<T> fromIterable(final Iterable<T> iterable) {
+        return Observable.create(new Observable.OnSubscribe<T>() {
+            @Override
+            public void call(Subscriber<? super T> subscriber) {
+                try {
+                    Iterator<T> iterator = iterable.iterator();
+                    while (iterator.hasNext()) {
+                        if (subscriber.isUnsubscribed()) {
+                            return;
+                        }
+                        subscriber.onNext(iterator.next());
+                        Thread.sleep(1000);
+                    }
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onCompleted();
+                    }
+                } catch (Exception e) {
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onError(e);
+                    }
+                }
+            }
+        });
+    }
+
+    public static void main8(String[] args) throws Exception {
         // different kind of observables
         subcribePrint(Observable.interval(500L, TimeUnit.MILLISECONDS), "Interval Observable");
 
