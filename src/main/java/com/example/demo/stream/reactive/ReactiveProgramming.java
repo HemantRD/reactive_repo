@@ -25,6 +25,23 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) throws Exception {
+        // once for each Subscriber. The third Subscriber will join the other two, printing the numbers emitted after the first 500 milliseconds,
+        // but it won't print the numbers emitted before its subscription.
+        Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
+        ConnectableObservable<Long> published = interval.publish();
+        Subscription sub1 = subcribePrint(published, "First");
+        Subscription sub2 = subcribePrint(published, "Second");
+        System.out.println("waiting 3 seconds");
+        published.connect();
+        Thread.sleep(500);
+        Subscription sub3 = subcribePrint(published, "Third");
+        Thread.sleep(500);
+        sub1.unsubscribe();
+        sub2.unsubscribe();
+        sub3.unsubscribe();
+    }
+
+    public static void main9(String[] args) throws Exception {
         // unsubscribe from main thread example
         Path path = Paths.get("src", "main", "resources", "lorem_big.txt");
         List<String> data = Files.readAllLines(path);
