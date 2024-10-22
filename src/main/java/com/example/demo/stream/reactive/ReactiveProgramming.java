@@ -6,6 +6,7 @@ import rx.Subscription;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +26,22 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) throws Exception {
+        // It can be activated on the first subscription to it and deactivated when every Subscriber instance unsubscribes.
+        // This makes an Observable instance to become hot without calling the connect() method.
+        Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
+        Observable<Long> refCount = interval.publish().refCount();
+        Subscription sub1 = subcribePrint(refCount, "First");
+        Thread.sleep(300L);
+        Subscription sub2 = subcribePrint(refCount, "Second");
+        Thread.sleep(300L);
+        sub1.unsubscribe();
+        sub2.unsubscribe();
+        Subscription sub3 = subcribePrint(refCount, "Third");
+        Thread.sleep(300L);
+        sub3.unsubscribe();
+    }
+
+    public static void main11(String[] args) throws Exception {
         // What if we want to receive all the notifications that have been emitted before
         // our subscription and then to continue receiving the incoming ones? That can be accomplished by calling the replay() method instead of the publish() method
         Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
