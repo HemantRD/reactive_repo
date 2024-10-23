@@ -5,6 +5,9 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
+
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -26,6 +29,25 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) throws Exception {
+        // The Subject instances example (hot and also adhoc, onDemand close)
+        Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
+        Subject<Long, Long> publishSubject = PublishSubject.create();
+        interval.subscribe(publishSubject);
+
+        Subscription sub1 = subcribePrint(publishSubject, "First");
+        Subscription sub2 = subcribePrint(publishSubject, "Second");
+        Thread.sleep(300L);
+        publishSubject.onNext(555L);
+
+        Subscription sub3 = subcribePrint(publishSubject, "Third");
+        Thread.sleep(500L);
+
+        sub1.unsubscribe();
+        sub2.unsubscribe();
+        sub3.unsubscribe();
+    }
+
+    public static void main12(String[] args) throws Exception {
         // It can be activated on the first subscription to it and deactivated when every Subscriber instance unsubscribes.
         // This makes an Observable instance to become hot without calling the connect() method.
         Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
