@@ -5,6 +5,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
+import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
@@ -27,8 +28,22 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
+    public static void main(String[] args) {
+        ///When a or b changes, c is automatically updated to their sum.
+        BehaviorSubject<Double> a = BehaviorSubject.create(0.0);
+        BehaviorSubject<Double> b = BehaviorSubject.create(0.0);
+        BehaviorSubject<Double> c = BehaviorSubject.create(0.0);
 
-    public static void main(String[] args) throws Exception {
+        Observable.combineLatest(a, b, (x, y) -> x + y).subscribe(c);
+        subcribePrint(c.asObservable(), "Sum");
+
+        a.onNext(5d);
+        b.onNext(10d);
+        b.onNext(15d);
+        a.onNext(1d);
+    }
+
+    public static void main13(String[] args) throws Exception {
         // The Subject instances example (hot and also adhoc, onDemand close)
         Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
         Subject<Long, Long> publishSubject = PublishSubject.create();
