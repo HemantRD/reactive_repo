@@ -8,6 +8,7 @@ import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
+import rx.subscriptions.Subscriptions;
 
 
 import java.awt.*;
@@ -28,7 +29,64 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
+
     public static void main(String[] args) {
+        // map example
+//        Observable<String> mapped = Observable.just(2, 3, 5, 6).map(v -> v * 3).map(v -> (v % 2 == 0 ? "Even" : "Odd"));
+//        subcribePrint(mapped, "map");
+        // read files from folders using the give patterns
+        Observable<String> fsObs = listFolder(Paths.get("src", "main", "resources"), "{lorem_big.txt,application.properties}").
+                flatMap(path -> from(path));
+        subcribePrint(fsObs, "FS");
+    }
+
+    static Observable<Path> listFolder(Path dir, String glob) {
+        return Observable.<Path>create(subscriber -> {
+            try {
+                DirectoryStream<Path> stream = Files.newDirectoryStream(dir, glob);
+                subscriber.add(Subscriptions.create(() -> {
+                    try {
+                        stream.close();
+                    } catch (Exception e) {
+                        System.out.println("Error..." + e.getMessage());
+                    }
+                }));
+                Observable.<Path>from(stream).subscribe(subscriber);
+            } catch (Exception e) {
+                subscriber.onError(e);
+                System.out.println("Error..." + e.getMessage());
+            }
+        });
+    }
+
+    static Observable<String> from(final Path path) {
+        return Observable.<String>create(subscriber -> {
+            try {
+                BufferedReader reader = Files.newBufferedReader(path);
+                subscriber.add(Subscriptions.create(() -> {
+                    try {
+                        reader.close();
+                    } catch (Exception e) {
+                        System.out.println("Error..." + e.getMessage());
+                    }
+                }));
+                String line = null;
+                while ((line = reader.readLine()) != null && !subscriber.isUnsubscribed()) {
+                    subscriber.onNext(line);
+                }
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onCompleted();
+                }
+            } catch (Exception e) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onError(e);
+                }
+                System.out.println("Error..." + e.getMessage());
+            }
+        });
+    }
+
+    public static void main14(String[] args) {
         ///When a or b changes, c is automatically updated to their sum.
         BehaviorSubject<Double> a = BehaviorSubject.create(0.0);
         BehaviorSubject<Double> b = BehaviorSubject.create(0.0);
