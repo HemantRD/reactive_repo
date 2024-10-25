@@ -31,6 +31,21 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        // overload of flatMap method
+        // This overload is useful when all of the derivative items need to have access to their source item
+        // and usually saves us from using some kind of tuple or pair classes,
+//        Observable<Integer> flatMapped = Observable.just(5, 8).flatMap(v -> Observable.range(v, 3),
+//                (x, y) -> x + y);
+//        subcribePrint(flatMapped, "flatMap");
+
+        //overload use to prepend name of file developed in main15
+        Observable<String> sd = listFolder(Paths.get("src", "main", "resources"), "{application.properties,lorem_big.txt}")
+                .flatMap(path -> from(path),
+                        (path, line) -> path.getFileName() + " : " + line);
+        subcribePrint(sd, "FileName");
+    }
+
+    public static void main16(String[] args) {
         // overload of flatMap method Because of the error, 1 won't be emitted
         Observable<Integer> flatMapped = Observable.just(-1, 0, 1).map(v -> 2 / v).
                 flatMap(v -> Observable.just(v),
