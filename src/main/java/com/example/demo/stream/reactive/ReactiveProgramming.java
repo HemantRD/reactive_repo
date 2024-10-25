@@ -31,6 +31,15 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        // overload of flatMap method Because of the error, 1 won't be emitted
+        Observable<Integer> flatMapped = Observable.just(-1, 0, 1).map(v -> 2 / v).
+                flatMap(v -> Observable.just(v),
+                        e -> Observable.just(10),
+                        () -> Observable.just(42));
+        subcribePrint(flatMapped, "flatMap");
+    }
+
+    public static void main15(String[] args) {
         // map example
 //        Observable<String> mapped = Observable.just(2, 3, 5, 6).map(v -> v * 3).map(v -> (v % 2 == 0 ? "Even" : "Odd"));
 //        subcribePrint(mapped, "map");
