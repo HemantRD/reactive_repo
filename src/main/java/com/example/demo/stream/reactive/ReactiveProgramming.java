@@ -28,14 +28,22 @@ import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        Observable<Object> obs = Observable.interval(40l, TimeUnit.MILLISECONDS)
+                .switchMap(v -> Observable.timer(0L, 10L, TimeUnit.MILLISECONDS)
+                        .map(u -> "Observable <" + (v + 1) + "> : " + (v + u)));
+        subscribePrint(obs, "switchMap");
+        Thread.sleep(1000);
+    }
+
+    public static void main18(String[] args) {
         // flatMapIterable example
         Observable<?> filterableMapped = Observable.just(Arrays.asList(2, 4),
                 Arrays.asList("two", "four")).flatMapIterable(l -> l);
-        subcribePrint(filterableMapped, "filterableMapped");
+        subscribePrint(filterableMapped, "filterableMapped");
 
         Observable<Object> data = Observable.just(Arrays.asList(2, 4)).flatMapIterable(r -> r);
-        subcribePrint(data, "d");
+        subscribePrint(data, "d");
     }
 
     public static void main17(String[] args) {
@@ -50,7 +58,7 @@ public class ReactiveProgramming {
         Observable<String> sd = listFolder(Paths.get("src", "main", "resources"), "{application.properties,lorem_big.txt}")
                 .flatMap(path -> from(path),
                         (path, line) -> path.getFileName() + " : " + line);
-        subcribePrint(sd, "FileName");
+        subscribePrint(sd, "FileName");
     }
 
     public static void main16(String[] args) {
@@ -59,7 +67,7 @@ public class ReactiveProgramming {
                 flatMap(v -> Observable.just(v),
                         e -> Observable.just(10),
                         () -> Observable.just(42));
-        subcribePrint(flatMapped, "flatMap");
+        subscribePrint(flatMapped, "flatMap");
     }
 
     public static void main15(String[] args) {
@@ -69,7 +77,7 @@ public class ReactiveProgramming {
         // read files from folders using the give patterns
         Observable<String> fsObs = listFolder(Paths.get("src", "main", "resources"), "{lorem_big.txt,application.properties}").
                 flatMap(path -> from(path));
-        subcribePrint(fsObs, "FS");
+        subscribePrint(fsObs, "FS");
     }
 
     static Observable<Path> listFolder(Path dir, String glob) {
@@ -125,7 +133,7 @@ public class ReactiveProgramming {
         BehaviorSubject<Double> c = BehaviorSubject.create(0.0);
 
         Observable.combineLatest(a, b, (x, y) -> x + y).subscribe(c);
-        subcribePrint(c.asObservable(), "Sum");
+        subscribePrint(c.asObservable(), "Sum");
 
         a.onNext(5d);
         b.onNext(10d);
@@ -139,12 +147,12 @@ public class ReactiveProgramming {
         Subject<Long, Long> publishSubject = PublishSubject.create();
         interval.subscribe(publishSubject);
 
-        Subscription sub1 = subcribePrint(publishSubject, "First");
-        Subscription sub2 = subcribePrint(publishSubject, "Second");
+        Subscription sub1 = subscribePrint(publishSubject, "First");
+        Subscription sub2 = subscribePrint(publishSubject, "Second");
         Thread.sleep(300L);
         publishSubject.onNext(555L);
 
-        Subscription sub3 = subcribePrint(publishSubject, "Third");
+        Subscription sub3 = subscribePrint(publishSubject, "Third");
         Thread.sleep(500L);
 
         sub1.unsubscribe();
@@ -157,13 +165,13 @@ public class ReactiveProgramming {
         // This makes an Observable instance to become hot without calling the connect() method.
         Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
         Observable<Long> refCount = interval.publish().refCount();
-        Subscription sub1 = subcribePrint(refCount, "First");
+        Subscription sub1 = subscribePrint(refCount, "First");
         Thread.sleep(300L);
-        Subscription sub2 = subcribePrint(refCount, "Second");
+        Subscription sub2 = subscribePrint(refCount, "Second");
         Thread.sleep(300L);
         sub1.unsubscribe();
         sub2.unsubscribe();
-        Subscription sub3 = subcribePrint(refCount, "Third");
+        Subscription sub3 = subscribePrint(refCount, "Third");
         Thread.sleep(300L);
         sub3.unsubscribe();
     }
@@ -173,12 +181,12 @@ public class ReactiveProgramming {
         // our subscription and then to continue receiving the incoming ones? That can be accomplished by calling the replay() method instead of the publish() method
         Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
         ConnectableObservable<Long> published = interval.replay();
-        Subscription sub1 = subcribePrint(published, "First");
-        Subscription sub2 = subcribePrint(published, "Second");
+        Subscription sub1 = subscribePrint(published, "First");
+        Subscription sub2 = subscribePrint(published, "Second");
         System.out.println("waiting 3 seconds");
         published.connect();
         Thread.sleep(500);
-        Subscription sub3 = subcribePrint(published, "Third");
+        Subscription sub3 = subscribePrint(published, "Third");
         Thread.sleep(500);
         sub1.unsubscribe();
         sub2.unsubscribe();
@@ -190,12 +198,12 @@ public class ReactiveProgramming {
         // but it won't print the numbers emitted before its subscription.
         Observable<Long> interval = Observable.interval(100L, TimeUnit.MILLISECONDS);
         ConnectableObservable<Long> published = interval.publish();
-        Subscription sub1 = subcribePrint(published, "First");
-        Subscription sub2 = subcribePrint(published, "Second");
+        Subscription sub1 = subscribePrint(published, "First");
+        Subscription sub2 = subscribePrint(published, "Second");
         System.out.println("waiting 3 seconds");
         published.connect();
         Thread.sleep(500);
-        Subscription sub3 = subcribePrint(published, "Third");
+        Subscription sub3 = subscribePrint(published, "Third");
         Thread.sleep(500);
         sub1.unsubscribe();
         sub2.unsubscribe();
@@ -207,7 +215,7 @@ public class ReactiveProgramming {
         Path path = Paths.get("src", "main", "resources", "lorem_big.txt");
         List<String> data = Files.readAllLines(path);
         Observable<String> observable = fromIterable(data).subscribeOn(Schedulers.computation());
-        Subscription subscription = subcribePrint(observable, "File");
+        Subscription subscription = subscribePrint(observable, "File");
 
         System.out.println("Before unsubscribe!");
         System.out.println("-------------------");
@@ -245,24 +253,24 @@ public class ReactiveProgramming {
 
     public static void main8(String[] args) throws Exception {
         // different kind of observables
-        subcribePrint(Observable.interval(500L, TimeUnit.MILLISECONDS), "Interval Observable");
+        subscribePrint(Observable.interval(500L, TimeUnit.MILLISECONDS), "Interval Observable");
 
-        subcribePrint(Observable.timer(0L, 2L, TimeUnit.SECONDS), "Timed Interval Observable");
+        subscribePrint(Observable.timer(0L, 2L, TimeUnit.SECONDS), "Timed Interval Observable");
 
-        subcribePrint(Observable.timer(2L, TimeUnit.SECONDS), "Timer Observable");
+        subscribePrint(Observable.timer(2L, TimeUnit.SECONDS), "Timer Observable");
 
-        subcribePrint(Observable.error(new Exception("Test Error!")), "Error Observable");
+        subscribePrint(Observable.error(new Exception("Test Error!")), "Error Observable");
 
-        subcribePrint(Observable.empty(), "Empty Observable");
+        subscribePrint(Observable.empty(), "Empty Observable");
 
-        subcribePrint(Observable.never(), "Never Observable");
+        subscribePrint(Observable.never(), "Never Observable");
 
-        subcribePrint(Observable.range(1, 3), "Range Observable");
+        subscribePrint(Observable.range(1, 3), "Range Observable");
 
         Thread.sleep(3000L);
     }
 
-    static <T> Subscription subcribePrint(Observable<T> observable, String name) {
+    public static <T> Subscription subscribePrint(Observable<T> observable, String name) {
         return observable.subscribe((v) -> System.out.println(name + " :" + v),
                 (e) -> {
                     System.err.println("Error from " + name + ":");
