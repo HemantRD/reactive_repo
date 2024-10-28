@@ -10,8 +10,6 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 import rx.subscriptions.Subscriptions;
 
-
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,6 +29,16 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        // flatMapIterable example
+        Observable<?> filterableMapped = Observable.just(Arrays.asList(2, 4),
+                Arrays.asList("two", "four")).flatMapIterable(l -> l);
+        subcribePrint(filterableMapped, "filterableMapped");
+
+        Observable<Object> data = Observable.just(Arrays.asList(2, 4)).flatMapIterable(r -> r);
+        subcribePrint(data, "d");
+    }
+
+    public static void main17(String[] args) {
         // overload of flatMap method
         // This overload is useful when all of the derivative items need to have access to their source item
         // and usually saves us from using some kind of tuple or pair classes,
