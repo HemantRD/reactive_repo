@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) throws Exception {
+        // switchMap example not clear to hemant
         Observable<Object> obs = Observable.interval(40l, TimeUnit.MILLISECONDS)
                 .switchMap(v -> Observable.timer(0L, 10L, TimeUnit.MILLISECONDS)
                         .map(u -> "Observable <" + (v + 1) + "> : " + (v + u)));
