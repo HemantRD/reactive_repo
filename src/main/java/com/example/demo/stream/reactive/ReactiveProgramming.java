@@ -35,6 +35,8 @@ public class ReactiveProgramming {
                         .map(u -> "Observable <" + (v + 1) + "> : " + (v + u)));
         subscribePrint(obs, "switchMap");
         Thread.sleep(1000);
+        //https://dadcbds.medium.com/switchmap-and-concatmap-885d7e9d090e
+        // read above article based on bandwidth
     }
 
     public static void main18(String[] args) {
