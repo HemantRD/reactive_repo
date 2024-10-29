@@ -28,7 +28,21 @@ import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        // groupBy example
+        List<String> albums = Arrays.asList(
+                "The Piper at the Gates of Dawn",
+                "A Saucerful of Secrets",
+                "More", "Ummagumma", "Atom Heart Mother", "Meddle", "Obscured by Clouds",
+                "The Dark Side of the Moon",
+                "Wish You Were Here", "Animals", "The Wall"
+        );
+        Observable.from(albums).groupBy(r -> r.split(" ").length).subscribe(t -> {
+            subscribePrint(t, t.getKey() + " word(s)");
+        });
+    }
+
+    public static void main19(String[] args) throws Exception {
         // switchMap example not clear to hemant
         Observable<Object> obs = Observable.interval(40l, TimeUnit.MILLISECONDS)
                 .switchMap(v -> Observable.timer(0L, 10L, TimeUnit.MILLISECONDS)
