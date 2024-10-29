@@ -5,6 +5,8 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
+import rx.schedulers.TimeInterval;
+import rx.schedulers.Timestamped;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
@@ -28,7 +30,24 @@ import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        // cast operator
+        List<Number> list = Arrays.asList(1, 2, 3);
+        Observable<Integer> observable = Observable.from(list).cast(Integer.class);
+        subscribePrint(observable, "observable");
+        System.out.println("\n\n\n");
+        //timestamp operator
+        List<Number> list1 = Arrays.asList(1, 2, 3);
+        Observable<Timestamped<Number>> timestamp = Observable.from(list1).timestamp();
+        subscribePrint(timestamp, "timestamp");
+        System.out.println("\n\n\n");
+        //timeInterval operator
+        Observable<TimeInterval<Long>> timeInterval = Observable.timer(0l, 150l, TimeUnit.MILLISECONDS).timeInterval();
+        subscribePrint(timeInterval, "Time intervals");
+        Thread.sleep(1000);
+    }
+
+    public static void main20(String[] args) {
         // groupBy example
         List<String> albums = Arrays.asList(
                 "The Piper at the Gates of Dawn",
