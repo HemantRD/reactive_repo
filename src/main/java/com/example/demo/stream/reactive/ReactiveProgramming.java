@@ -40,6 +40,11 @@ public class ReactiveProgramming {
         Observable.from(albums).groupBy(r -> r.split(" ").length).subscribe(t -> {
             subscribePrint(t, t.getKey() + " word(s)");
         });
+        System.out.println("\n\n\n\n");
+        // groupBy another overload example
+        Observable.from(albums).groupBy(album -> album.replaceAll("[^mM]", "").length(),
+                album -> album.replaceAll("[mM]", "*")).subscribe(obs -> subscribePrint(obs, obs.getKey() + " occurences of 'm'"));
+
     }
 
     public static void main19(String[] args) throws Exception {
