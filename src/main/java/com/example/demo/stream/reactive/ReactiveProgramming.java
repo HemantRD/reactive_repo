@@ -38,6 +38,10 @@ public class ReactiveProgramming {
         System.out.println("\n\n\n");
         //takeLast example
         subscribePrint(numbers.takeLast(4), "Last 4");
+
+        System.out.println("\n\n\n");
+        //last example
+        subscribePrint(numbers.last(), "Last");
     }
 
     public static void main21(String[] args) throws Exception {
