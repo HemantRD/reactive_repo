@@ -30,7 +30,17 @@ import java.util.regex.Pattern;
 
 public class ReactiveProgramming {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        // filter example
+        Observable<Integer> numbers = Observable.just(1, 13, 32, 45, 21, 8, 98, 103, 55);
+        Observable<Integer> filter = numbers.filter(n -> n % 2 == 0);
+        subscribePrint(filter, "Filters");
+        System.out.println("\n\n\n");
+        //takeLast example
+        subscribePrint(numbers.takeLast(4), "Last 4");
+    }
+
+    public static void main21(String[] args) throws Exception {
         // cast operator
         List<Number> list = Arrays.asList(1, 2, 3);
         Observable<Integer> observable = Observable.from(list).cast(Integer.class);
