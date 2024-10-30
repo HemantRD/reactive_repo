@@ -33,6 +33,10 @@ public class ReactiveProgramming {
     public static void main(String[] args) {
         // filter example
         Observable<Integer> numbers = Observable.just(1, 13, 32, 45, 21, 8, 98, 103, 55);
+        Observable<String> words = Observable.just(
+                "One", "of", "the", "few", "of",
+                "the", "crew", "crew");
+        Observable<?> various = Observable.just("1", 2, 3.0, 4, 5L);
         Observable<Integer> filter = numbers.filter(n -> n % 2 == 0);
         subscribePrint(filter, "Filters");
         System.out.println("\n\n\n");
@@ -42,6 +46,61 @@ public class ReactiveProgramming {
         System.out.println("\n\n\n");
         //last example
         subscribePrint(numbers.last(), "Last");
+
+        //takeLastBuffer example
+        System.out.println("\n\n\n");
+        subscribePrint(
+                numbers.takeLastBuffer(4), "Last buffer"
+        );
+        //lastOrDefault example
+        System.out.println("\n\n\n");
+        subscribePrint(
+                numbers.lastOrDefault(200), "Last or default"
+        );
+        //empty with lastOrDefault
+        System.out.println("\n\n\n");
+        subscribePrint(
+                Observable.empty().lastOrDefault(200), "Last or default"
+        );
+        System.out.println("\n\n\n");
+        //skipLast
+        subscribePrint(numbers.skipLast(2), "Skip last 2");
+
+        System.out.println("\n\n\n");
+        //skip
+        subscribePrint(numbers.skip(8), "Skip");
+
+        System.out.println("\n\n\n");
+        //take
+        subscribePrint(numbers.take(2), "take");
+
+        System.out.println("\n\n\n");
+        //first
+        subscribePrint(numbers.first(), "First");
+
+        System.out.println("\n\n\n");
+        //elementAt
+        subscribePrint(numbers.elementAt(5), "At 5");
+
+        //empty with elementAtOrDefault
+        System.out.println("\n\n\n");
+        subscribePrint(
+                Observable.empty().elementAtOrDefault(15, 2000), "elementAtOrDefault"
+        );
+
+        //distinct
+        System.out.println("\n\n\n");
+        subscribePrint(words.distinct(), "words distinct");
+
+        //words.distinctUntilChanged not clear to hemant
+        System.out.println("\n\n\n");
+        subscribePrint(
+                words.distinctUntilChanged(), "Distinct until changed"
+        );
+
+        //ofType
+        System.out.println("\n\n\n");
+        subscribePrint(various.ofType(Integer.class), "Only integers");
     }
 
     public static void main21(String[] args) throws Exception {
