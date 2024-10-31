@@ -31,6 +31,19 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        //scan operator, accumulating data
+        System.out.println("\n\n\n");
+        Observable<Integer> scan = Observable.range(1, 10).scan((p, v) -> p + v);
+        subscribePrint(scan.last(), "scan");
+
+        //scan operator with seed/initial value
+        System.out.println("\n\n\n");
+        Observable<String> file = from(Paths.get("src", "main", "resources", "lorem_big.txt"));
+        scan = file.scan(0, (p, v) -> p + 1);
+        subscribePrint(scan.last(), "wc -l");
+    }
+
+    public static void main22(String[] args) {
         // filter example
         Observable<Integer> numbers = Observable.just(1, 13, 32, 45, 21, 8, 98, 103, 55);
         Observable<String> words = Observable.just(
@@ -101,11 +114,6 @@ public class ReactiveProgramming {
         //ofType
         System.out.println("\n\n\n");
         subscribePrint(various.ofType(Integer.class), "Only integers");
-
-        //scan operator, accumulating data
-        System.out.println("\n\n\n");
-        Observable<Integer> scan = Observable.range(1, 10).scan((p, v) -> p + v);
-        subscribePrint(scan.last(), "scan");
     }
 
     public static void main21(String[] args) throws Exception {
