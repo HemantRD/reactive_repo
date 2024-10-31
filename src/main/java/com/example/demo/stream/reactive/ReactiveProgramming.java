@@ -101,6 +101,11 @@ public class ReactiveProgramming {
         //ofType
         System.out.println("\n\n\n");
         subscribePrint(various.ofType(Integer.class), "Only integers");
+
+        //scan operator, accumulating data
+        System.out.println("\n\n\n");
+        Observable<Integer> scan = Observable.range(1, 10).scan((p, v) -> p + v);
+        subscribePrint(scan.last(), "scan");
     }
 
     public static void main21(String[] args) throws Exception {
