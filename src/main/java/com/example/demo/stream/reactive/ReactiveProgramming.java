@@ -12,6 +12,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 import rx.subscriptions.Subscriptions;
 
+import java.beans.Introspector;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,6 +32,25 @@ import java.util.regex.Pattern;
 public class ReactiveProgramming {
 
     public static void main(String[] args) {
+        Observable<String> file = from(Paths.get("src", "main", "resources", "operators.txt"));
+        Observable<String> multy = file.flatMap(line -> Observable.from(line.split("\\.")))
+                .map(String::trim)
+                .map(sentence -> sentence.split(" "))
+                .filter(array -> array.length > 0)
+                .map(array -> array[0])
+                .distinct()
+                .groupBy(word -> word.contains("'"))
+                .flatMap(observable -> observable.getKey() ? observable : observable.map(Introspector::decapitalize))
+                .map(String::trim)
+                .filter(word -> !word.isEmpty())
+                .scan((current, word) -> current + " " + word)
+                .last()
+                .map(r -> r + ".");
+
+        subscribePrint(multy, "Multiple Operators");
+    }
+
+    public static void main23(String[] args) {
         //scan operator, accumulating data
         System.out.println("\n\n\n");
         Observable<Integer> scan = Observable.range(1, 10).scan((p, v) -> p + v);
