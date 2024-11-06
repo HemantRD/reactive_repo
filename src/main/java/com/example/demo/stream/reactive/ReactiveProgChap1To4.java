@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-public class ReactiveProgramming {
+public class ReactiveProgChap1To4 {
 
     public static void main(String[] args) {
         Observable<String> file = from(Paths.get("src", "main", "resources", "operators.txt"));
@@ -246,7 +246,7 @@ public class ReactiveProgramming {
         });
     }
 
-    static Observable<String> from(final Path path) {
+    public static Observable<String> from(final Path path) {
         return Observable.<String>create(subscriber -> {
             try {
                 BufferedReader reader = Files.newBufferedReader(path);
@@ -568,11 +568,11 @@ public class ReactiveProgramming {
         input.connect();
     }
 
-    static ConnectableObservable<String> from(final InputStream stream) {
+    public static ConnectableObservable<String> from(final InputStream stream) {
         return from(new BufferedReader(new InputStreamReader(stream)));
     }
 
-    static ConnectableObservable<String> from(final BufferedReader reader) {
+    public static ConnectableObservable<String> from(final BufferedReader reader) {
         return Observable.create((Observable.OnSubscribe<String>) subscriber -> {
             if (subscriber.isUnsubscribed()) {
                 return;
