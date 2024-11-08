@@ -11,6 +11,28 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) {
+        //combineLatest example
+        Observable<String> greetings = Observable.just("Hello", "Hi", "Howdy",
+                        "Zdravei", "Yo", "Good to see ya")
+                .zipWith(Observable.interval(1L, TimeUnit.SECONDS), ReactiveProgChap5to6::onlyFirstArg);
+        Observable<String> names = Observable.just("Meddle", "Tanya", "Dali", "Joshua")
+                .zipWith(Observable.interval(1500L, TimeUnit.MILLISECONDS),
+                        ReactiveProgChap5to6::onlyFirstArg);
+        Observable<String> punctuations = Observable.just(".", "?", "!", "!!!", "...").zipWith(
+                Observable.interval(1100L, TimeUnit.MILLISECONDS),
+                ReactiveProgChap5to6::onlyFirstArg);
+
+        Observable<String> combined = Observable.combineLatest(greetings, names, punctuations, (greeting, name, punctuation) -> {
+            return greeting + " " + name + punctuation;
+        });
+        blockingSubscribePrint(combined, "Sentences");
+    }
+
+    public static <T, R> T onlyFirstArg(T arg1, R arg2) {
+        return arg1;
+    }
+
+    public static void main1(String[] args) {
         // simple zip
         Observable<Integer> zip = Observable.zip(Observable.just(1, 2),
                 Observable.just(5, 2, 6, 5),
