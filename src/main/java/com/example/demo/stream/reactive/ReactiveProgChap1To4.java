@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -423,6 +424,12 @@ public class ReactiveProgChap1To4 {
                     System.err.println("Error from " + name + ":");
                     System.err.println(e.getMessage());
                 }, () -> System.out.println(name + " ended!"));
+    }
+
+    public static <T> void blockingSubscribePrint(Observable<T> observable, String name) {
+        CountDownLatch latch = new CountDownLatch(1);
+        subscribePrint(observable.finallyDo(() -> latch.countDown()), name);
+        try { latch.await(); } catch (InterruptedException e) {}
     }
 
     public static void main7(String[] args) {
