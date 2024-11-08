@@ -27,6 +27,14 @@ public class ReactiveProgChap5to6 {
                 (value, i) -> value
         );
         blockingSubscribePrint(timedZip, "timedZip");
+        System.out.println("\n\n\n");
+
+        //zipWith operator
+        Observable<String> timedZip2 = Observable.from(Arrays.asList("Z", "I", "P", "P")).zipWith(
+                Observable.interval(600L, TimeUnit.MILLISECONDS),
+                (value, skip) -> value
+        );
+        blockingSubscribePrint(timedZip2, "Timed Zip2");
     }
 
 }
