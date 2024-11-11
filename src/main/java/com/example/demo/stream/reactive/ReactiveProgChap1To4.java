@@ -562,8 +562,8 @@ public class ReactiveProgChap1To4 {
 
         Observable<Double> a = varStream("a", input);
         Observable<Double> b = varStream("b", input);
-
-        Observable.combineLatest(a, b, (z, j) -> z + j).subscribe(next -> {
+        // previous one Observable.combineLatest(a, b, (z, j) -> z + j).subscribe(next -> {
+        Observable.combineLatest(a.startWith(0d), b.startWith(0d), (z, j) -> z + j).subscribe(next -> {
             sum.set(next.intValue());
             System.out.println("update : a + b = " + sum); // (2)
         }, e -> {
