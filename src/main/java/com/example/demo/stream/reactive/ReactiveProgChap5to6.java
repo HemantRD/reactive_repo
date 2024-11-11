@@ -26,6 +26,17 @@ public class ReactiveProgChap5to6 {
             return greeting + " " + name + punctuation;
         });
         blockingSubscribePrint(combined, "Sentences");
+
+        System.out.println("\n\n\n");
+        //merge operator
+        Observable<String> merged = Observable.merge(greetings, names, punctuations);
+        blockingSubscribePrint(merged, "Words");
+
+        System.out.println("\n\n\n");
+        //merge operator
+        Observable<String> mergeDelayError = Observable.mergeDelayError(greetings, names, punctuations);
+        blockingSubscribePrint(merged, "mergeDelayError");
+
     }
 
     public static <T, R> T onlyFirstArg(T arg1, R arg2) {
