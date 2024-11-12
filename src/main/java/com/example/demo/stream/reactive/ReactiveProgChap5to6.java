@@ -7,10 +7,28 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.demo.stream.reactive.ReactiveProgChap1To4.*;
+import static com.example.demo.stream.reactive.ReactiveProgChap1To4.blockingSubscribePrint;
 
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) {
+        Observable<String> words = Observable.just("one", "way", "or", "another", "I'll", "learn", "RxJava")
+                .zipWith(Observable.interval(200L, TimeUnit.MILLISECONDS),
+                        (x, y) -> x);
+        Observable<Long> interval = Observable.interval(500L, TimeUnit.MILLISECONDS);
+        //takeUntil operator
+        blockingSubscribePrint(words.takeUntil(interval), "takeUntil");
+        System.out.println("\n\n\n");
+
+        //takeWhile operator
+        blockingSubscribePrint(words.takeWhile(word -> word.length() > 2), "takeWhile");
+        System.out.println("\n\n\n");
+
+        //skipUntil operator
+        blockingSubscribePrint(words.skipUntil(interval), "skipUntil");
+    }
+
+    public static void main4(String[] args) {
         // amb operator
         Observable<String> words = Observable.just("Some", "Other");
         Observable<Long> interval = Observable
