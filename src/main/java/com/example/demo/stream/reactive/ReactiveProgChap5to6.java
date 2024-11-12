@@ -24,6 +24,10 @@ public class ReactiveProgChap5to6 {
         Observable<String> concat = punctuations.startWith(names).startWith(greetings);
         blockingSubscribePrint(concat, "startsWith");
 
+        //concatWith operator similar to concat
+        Observable<String> concat1 = greetings.concatWith(names).concatWith(punctuations);
+        blockingSubscribePrint(concat1, "concatWith");
+
     }
 
     public static void main2(String[] args) {
