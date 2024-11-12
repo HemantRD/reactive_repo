@@ -3,6 +3,7 @@ package com.example.demo.stream.reactive;
 import rx.Observable;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.demo.stream.reactive.ReactiveProgChap1To4.*;
@@ -10,6 +11,23 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.*;
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) {
+        // amb operator not working as expected
+        Observable<String> words = Observable.just("Some", "Other");
+        Observable<Long> interval = Observable
+                .interval(500L, TimeUnit.MILLISECONDS).take(2);
+
+        Observable<? extends Object> amb = Observable.amb(words, interval);
+        blockingSubscribePrint(amb, "Amb 1");
+
+        System.out.println("\n\n\n");
+        // amb operator not working as expected
+        Random r = new Random();
+        Observable<String> source1 = Observable.just("data from source 1").delay(r.nextInt(1000), TimeUnit.MILLISECONDS);
+        Observable<String> source2 = Observable.just("data from source 2").delay(r.nextInt(1000), TimeUnit.MILLISECONDS);
+        blockingSubscribePrint(Observable.amb(source1, source2), "Amb 2");
+    }
+
+    public static void main3(String[] args) {
         Observable<String> greetings = Observable.just("Hello", "Hi", "Howdy",
                         "Zdravei", "Yo", "Good to see ya")
                 .zipWith(Observable.interval(1L, TimeUnit.SECONDS), ReactiveProgChap5to6::onlyFirstArg);
