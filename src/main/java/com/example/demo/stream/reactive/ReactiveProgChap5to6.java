@@ -11,7 +11,7 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.*;
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) {
-        // amb operator not working as expected
+        // amb operator
         Observable<String> words = Observable.just("Some", "Other");
         Observable<Long> interval = Observable
                 .interval(500L, TimeUnit.MILLISECONDS).take(2);
@@ -20,7 +20,7 @@ public class ReactiveProgChap5to6 {
         blockingSubscribePrint(amb, "Amb 1");
 
         System.out.println("\n\n\n");
-        // amb operator not working as expected
+        // amb operator
         Random r = new Random();
         Observable<String> source1 = Observable.just("data from source 1").delay(r.nextInt(1000), TimeUnit.MILLISECONDS);
         Observable<String> source2 = Observable.just("data from source 2").delay(r.nextInt(1000), TimeUnit.MILLISECONDS);
