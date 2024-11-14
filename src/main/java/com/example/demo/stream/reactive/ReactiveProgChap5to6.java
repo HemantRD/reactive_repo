@@ -12,6 +12,33 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.blockingSubs
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) {
+        //defaultIfEmpty operator
+        Observable<Object> test = Observable.empty().defaultIfEmpty(5);
+        subscribePrint(test, "defaultIfEmpty");
+
+        System.out.println("\n\n\n");
+        //onErrorReturn operator
+        Observable<Integer> numbers = Observable.just("1", "2", "three", "4", "5").map(Integer::parseInt).onErrorReturn(r -> -1);
+        subscribePrint(numbers, "onErrorReturn");
+
+        System.out.println("\n\n\n");
+        //onExceptionResumeNext operator
+        Observable<Integer> defaultOnError = Observable.just(5, 4, 3, 2, 1);
+        Observable<Integer> numbers2 = Observable.just("1", "2", "three", "4", "5").map(Integer::parseInt)
+                .onExceptionResumeNext(defaultOnError);
+        subscribePrint(numbers2, "onExceptionResumeNext");
+
+        System.out.println("\n\n\n");
+        //onErrorResumeNext operator
+        Observable<Integer> numbers3 = Observable.just("1", "2", "three", "4", "5").doOnNext(number -> {
+                    assert !numbers.equals("three");
+                }
+        ).map(Integer::parseInt).onErrorResumeNext(defaultOnError);
+        subscribePrint(numbers3, "onErrorResumeNext");
+
+    }
+
+    public static void main5(String[] args) {
         Observable<String> words = Observable.just("one", "way", "or", "another", "I'll", "learn", "RxJava")
                 .zipWith(Observable.interval(200L, TimeUnit.MILLISECONDS),
                         (x, y) -> x);
