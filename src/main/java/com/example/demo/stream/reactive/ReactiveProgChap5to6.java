@@ -1,6 +1,7 @@
 package com.example.demo.stream.reactive;
 
 import rx.Observable;
+import rx.Subscriber;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -11,7 +12,65 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.blockingSubs
 
 public class ReactiveProgChap5to6 {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        //retry operator
+        subscribePrint(Observable.create(new ErrorEmitter()).retry(), "Error Retry");
+        System.out.println("\n\n\n");
+
+        //retryWhen operator
+        Observable<Integer> when = Observable.create(new ErrorEmitter())
+                .retryWhen(attempts -> {
+                    return attempts.flatMap(error -> {
+                        if (error instanceof FooException) {
+                            System.err.println("Delaying...");
+                            return Observable.timer(2L, TimeUnit.SECONDS);
+                        }
+                        return Observable.error(error);
+                    });
+                })
+                .retry((attempts, error) -> {
+                    return error instanceof BooException && attempts < 3;
+                });
+        subscribePrint(when, "retryWhen");
+        Thread.sleep(25000);
+    }
+
+    static class FooException extends RuntimeException {
+        public FooException() {
+            super("Foo!");
+        }
+    }
+
+    static class BooException extends RuntimeException {
+        public BooException() {
+            super("Boo!");
+        }
+    }
+
+    static class ErrorEmitter implements Observable.OnSubscribe<Integer> {
+        private int throwAnErrorCounter = 5;
+
+        @Override
+        public void call(Subscriber<? super Integer> subscriber) {
+            subscriber.onNext(1);
+            subscriber.onNext(2);
+            if (throwAnErrorCounter > 4) {
+                throwAnErrorCounter--;
+                subscriber.onError(new FooException());
+                return;
+            }
+            if (throwAnErrorCounter > 0) {
+                throwAnErrorCounter--;
+                subscriber.onError(new BooException());
+                return;
+            }
+            subscriber.onNext(3);
+            subscriber.onNext(4);
+            subscriber.onCompleted();
+        }
+    }
+
+    public static void main6(String[] args) {
         //defaultIfEmpty operator
         Observable<Object> test = Observable.empty().defaultIfEmpty(5);
         subscribePrint(test, "defaultIfEmpty");
