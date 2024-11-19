@@ -1,10 +1,16 @@
 package com.example.demo.stream.reactive;
 
+import com.google.gson.Gson;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.nio.client.HttpAsyncClient;
 import rx.Observable;
 import rx.Subscriber;
+import rx.apache.http.ObservableHttp;
 
-import java.util.Arrays;
-import java.util.Random;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.demo.stream.reactive.ReactiveProgChap1To4.*;
@@ -12,7 +18,63 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.blockingSubs
 
 public class ReactiveProgChap5to6 {
 
+    private static Map<String, Set<Map<String, Object>>> cache = new ConcurrentHashMap<>();
+
     public static void main(String[] args) throws Exception {
+        //complete code to call the endpoint https://github.com/meddle0x53 with filter not forked (not working)
+        try (CloseableHttpAsyncClient client = HttpAsyncClients.createDefault()) {
+            client.start();
+            String username = "meddle0x53";
+            Observable<Map> resp = githubUserInfoRequest(client, username);
+            blockingSubscribePrint(resp.map(json -> json.get("name") + "(" + json.get("language") + ")"), "Json");
+        }
+    }
+
+    static Observable<Map> githubUserInfoRequest(HttpAsyncClient client, String githubUser) {
+        if (githubUser == null) {
+            return Observable.<Map>error(new NullPointerException("Github user must not be null"));
+        }
+        String url = "https://api.github.com/users/" + githubUser + "/repos";
+        return requestJson(client, url)
+                .filter(json -> json.containsKey("git_url"))
+                .filter(json -> json.get("fork").equals(false));
+    }
+
+    static Observable<Map> requestJson(HttpAsyncClient client, String url) {
+        Observable<String> rawResponse = ObservableHttp.createGet(url, client).toObservable()
+                .flatMap(resp -> resp.getContent()
+                        .map(bytes -> new String(bytes, StandardCharsets.UTF_8)))
+                .retry(5)
+                .cast(String.class)
+                .map(String::trim)
+                .doOnNext(resp -> getCache(url).clear());
+
+        Observable<String> objects = rawResponse.filter(data -> data.startsWith("{")).map(data -> "[" + data + "]");
+        Observable<String> arrays = rawResponse.filter(data -> data.startsWith("["));
+
+        Observable<Map> response = arrays.ambWith(objects).map(data -> {
+                    return new Gson().fromJson(data, List.class);
+                }).flatMapIterable(list -> list)
+                .cast(Map.class)
+                .doOnNext(json -> getCache(url).add((Map<String, Object>) json));
+        return Observable.amb(fromCache(url), response);
+    }
+
+    public static Set<Map<String, Object>> getCache(String url) {
+        if (!cache.containsKey(url)) {
+            cache.put(url, new HashSet<Map<String, Object>>());
+        }
+        return cache.get(url);
+    }
+
+    public static Observable<Map<String, Object>> fromCache(String url) {
+        return Observable.from(getCache(url)).defaultIfEmpty(null)
+                .flatMap(json -> json == null ? Observable.never() : Observable.just(json))
+                .doOnNext(json -> json.put("json_cached", true));
+    }
+
+
+    public static void main7(String[] args) throws Exception {
         //retry operator
         subscribePrint(Observable.create(new ErrorEmitter()).retry(), "Error Retry");
         System.out.println("\n\n\n");

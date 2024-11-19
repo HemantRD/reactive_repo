@@ -36,6 +36,26 @@
 			<artifactId>rxjava</artifactId>
 			<version>1.0.8</version>
 		</dependency>
+		<dependency>
+			<groupId>io.reactivex</groupId>
+			<artifactId>rxapache-http</artifactId>
+			<version>0.21.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpasyncclient</artifactId>
+			<version>4.1.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
