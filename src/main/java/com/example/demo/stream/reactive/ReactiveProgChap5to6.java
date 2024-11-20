@@ -4,23 +4,66 @@ import com.google.gson.Gson;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.client.HttpAsyncClient;
+import rx.Notification;
 import rx.Observable;
 import rx.Subscriber;
 import rx.apache.http.ObservableHttp;
+import rx.functions.Action1;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static com.example.demo.stream.reactive.ReactiveProgChap1To4.*;
 import static com.example.demo.stream.reactive.ReactiveProgChap1To4.blockingSubscribePrint;
+import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePrint;
 
 public class ReactiveProgChap5to6 {
 
     private static Map<String, Set<Map<String, Object>>> cache = new ConcurrentHashMap<>();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        // this runs on the main thread
+        Observable.range(5, 5).doOnEach(debug("Test", "")).subscribe();
+        // this runs on the separate computation scheduler's thread
+        System.out.println("\n\n\n");
+        CountDownLatch latch = new CountDownLatch(1);
+        Observable.interval(500L, TimeUnit.MILLISECONDS).take(5).finallyDo(() -> latch.countDown()).doOnEach(debug("Default interval")).subscribe();
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+        }
+    }
+
+    static <T> Action1<Notification<? super T>> debug(String description, String offset) {
+        AtomicReference<String> nextOffset = new AtomicReference<>(">");
+        return (Notification<? super T> notification) -> {
+            switch (notification.getKind()) {
+                case OnNext:
+                    System.out.println(Thread.currentThread().getName() + "|" + description + ": " + offset +
+                            nextOffset.get() + notification.getValue());
+                    break;
+                case OnError:
+                    System.err.println(Thread.currentThread().getName() + "|" + description + ": " + offset +
+                            nextOffset.get() + " X " + notification.getThrowable());
+                    break;
+                case OnCompleted:
+                    System.out.println(Thread.currentThread().getName() + "|" + description + ": " + offset + nextOffset.get() + "|");
+                default:
+                    break;
+            }
+            nextOffset.getAndUpdate(p -> "-" + p);
+        };
+    }
+
+    static <T> Action1<Notification<? super T>> debug(String description) {
+        return debug(description, "");
+    }
+
+
+    public static void main8(String[] args) throws Exception {
         //complete code to call the endpoint https://github.com/meddle0x53 with filter not forked (not working)
         try (CloseableHttpAsyncClient client = HttpAsyncClients.createDefault()) {
             client.start();
