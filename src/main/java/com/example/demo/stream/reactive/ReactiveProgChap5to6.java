@@ -9,6 +9,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.apache.http.ObservableHttp;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -30,9 +31,20 @@ public class ReactiveProgChap5to6 {
         // this runs on the separate computation scheduler's thread
         System.out.println("\n\n\n");
         CountDownLatch latch = new CountDownLatch(1);
-        Observable.interval(500L, TimeUnit.MILLISECONDS).take(5).finallyDo(() -> latch.countDown()).doOnEach(debug("Default interval")).subscribe();
+        Observable.interval(500L, TimeUnit.MILLISECONDS).take(5)
+                .finallyDo(() -> latch.countDown()).doOnEach(debug("Default interval")).subscribe();
         try {
             latch.await();
+        } catch (InterruptedException e) {
+        }
+
+        // this runs on main thread
+        System.out.println("\n\n\n");
+        CountDownLatch latch1 = new CountDownLatch(1);
+        Observable.interval(500L, TimeUnit.MILLISECONDS, Schedulers.immediate()).take(5)
+                .finallyDo(() -> latch1.countDown()).doOnEach(debug("Immediate interval")).subscribe();
+        try {
+            latch1.await();
         } catch (InterruptedException e) {
         }
     }
