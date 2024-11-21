@@ -35,6 +35,12 @@ public class ReactiveProgChap5to6 {
         // trampoline method enqueues sub-tasks on the current thread. not clear to me
         schedule(Schedulers.trampoline(), 2, false);
         schedule(Schedulers.trampoline(), 2, true);
+
+        //Schedulers.newThread
+        System.out.println("\n\n\n");
+        schedule(Schedulers.newThread(), 2, true);
+        schedule(Schedulers.newThread(), 2, false);
+
     }
 
     static void schedule(Scheduler scheduler, int numberOfSubTasks, boolean onTheSameWorker) {
