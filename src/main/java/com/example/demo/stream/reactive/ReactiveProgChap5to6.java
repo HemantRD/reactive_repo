@@ -26,7 +26,7 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 
 public class ReactiveProgChap5to6 {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // everything runs on main thread. both having same output
         schedule(Schedulers.immediate(), 2, false);
         schedule(Schedulers.immediate(), 2, true);
@@ -41,6 +41,15 @@ public class ReactiveProgChap5to6 {
         schedule(Schedulers.newThread(), 2, true);
         schedule(Schedulers.newThread(), 2, false);
 
+        //Schedulers.computation
+        System.out.println("\n\n\n");
+        schedule(Schedulers.computation(), 5, false);
+
+        //Schedulers.io()
+        System.out.println("\n\n\n");
+        schedule(Schedulers.io(), 2, false);
+
+        Thread.sleep(10000);
     }
 
     static void schedule(Scheduler scheduler, int numberOfSubTasks, boolean onTheSameWorker) {
