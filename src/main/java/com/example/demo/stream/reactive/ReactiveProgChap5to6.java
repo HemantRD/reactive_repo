@@ -6,8 +6,10 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.client.HttpAsyncClient;
 import rx.Notification;
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.apache.http.ObservableHttp;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
@@ -16,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.example.demo.stream.reactive.ReactiveProgChap1To4.blockingSubscribePrint;
@@ -23,9 +26,65 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 
 public class ReactiveProgChap5to6 {
 
-    private static Map<String, Set<Map<String, Object>>> cache = new ConcurrentHashMap<>();
-
     public static void main(String[] args) {
+        // everything runs on main thread. both having same output
+        schedule(Schedulers.immediate(), 2, false);
+        schedule(Schedulers.immediate(), 2, true);
+
+        System.out.println("\n\n\n");
+        // trampoline method enqueues sub-tasks on the current thread. not clear to me
+        schedule(Schedulers.trampoline(), 2, false);
+        schedule(Schedulers.trampoline(), 2, true);
+    }
+
+    static void schedule(Scheduler scheduler, int numberOfSubTasks, boolean onTheSameWorker) {
+        List<Integer> list = new ArrayList<>();
+        AtomicInteger current = new AtomicInteger();
+        Random random = new Random();
+        Scheduler.Worker worker = scheduler.createWorker();
+        Action0 addWork = () -> {
+            synchronized (current) {
+                System.out.println("  Add : " + Thread.currentThread().getName() + " " + current.get());
+                list.add(random.nextInt(current.get()));
+                System.out.println("  End add : " + Thread.currentThread().getName() + " " + current.get());
+            }
+        };
+        Action0 removeWork = () -> {
+            synchronized (current) {
+                if (!list.isEmpty()) {
+                    System.out.println("  Remove : " + Thread.currentThread().getName());
+                    list.remove(0);
+                    System.out.println("  End remove :" + Thread.currentThread().getName());
+                }
+            }
+        };
+
+        Action0 work = () -> {
+            System.out.println(Thread.currentThread().getName());
+            for (int i = 1; i <= numberOfSubTasks; i++) {
+                current.set(i);
+                System.out.println("Begin add!");
+                if (onTheSameWorker) {
+                    worker.schedule(addWork);
+                } else {
+                    scheduler.createWorker().schedule(addWork);
+                }
+                System.out.println("End add!");
+            }
+            while (!list.isEmpty()) {
+                System.out.println("Begin remove!");
+                if (onTheSameWorker) {
+                    worker.schedule(removeWork);
+                } else {
+                    scheduler.createWorker().schedule(removeWork);
+                }
+                System.out.println("End remove!");
+            }
+        };
+        worker.schedule(work);
+    }
+
+    public static void main9(String[] args) {
         // this runs on the main thread
         Observable.range(5, 5).doOnEach(debug("Test", "")).subscribe();
         // this runs on the separate computation scheduler's thread
@@ -74,6 +133,7 @@ public class ReactiveProgChap5to6 {
         return debug(description, "");
     }
 
+    private static Map<String, Set<Map<String, Object>>> cache = new ConcurrentHashMap<>();
 
     public static void main8(String[] args) throws Exception {
         //complete code to call the endpoint https://github.com/meddle0x53 with filter not forked (not working)
