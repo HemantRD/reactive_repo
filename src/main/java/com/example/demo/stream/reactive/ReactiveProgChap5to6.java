@@ -27,6 +27,22 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) throws Exception {
+        // everything happens on main thread
+        Observable<Integer> range = Observable.range(20, 4).doOnEach(debug("Source"));
+        range.subscribe();
+
+        System.out.println("Hey!");
+        System.out.println("\n\n\n");
+        // everything happens on computation thread (other thread)
+        CountDownLatch latch = new CountDownLatch(1);
+        Observable<Integer> range2 = Observable.range(20, 4).doOnEach(debug("Source")).subscribeOn(Schedulers.computation()).
+                finallyDo(() -> latch.countDown());
+        range2.subscribe();
+        System.out.println("Hey!");
+        latch.await();
+    }
+
+    public static void main10(String[] args) throws Exception {
         // everything runs on main thread. both having same output
         schedule(Schedulers.immediate(), 2, false);
         schedule(Schedulers.immediate(), 2, true);
