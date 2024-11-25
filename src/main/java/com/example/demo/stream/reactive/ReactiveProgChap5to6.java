@@ -27,6 +27,19 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) throws Exception {
+        // Parallelism implementation 5 threads
+        Observable<Integer> range = Observable
+                .range(20, 5)
+                .flatMap(n -> Observable
+                        .range(n, 3)
+                        .subscribeOn(Schedulers.computation())
+                        .doOnEach(debug("Source")));
+        range.subscribe();
+
+        Thread.sleep(10000);
+    }
+
+    public static void main14(String[] args) throws Exception {
         //both the subscribeOn() and observeOn() operator
         CountDownLatch latch = new CountDownLatch(1);
         Observable<Integer> range = Observable.range(20, 3)
