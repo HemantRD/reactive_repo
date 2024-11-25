@@ -27,6 +27,26 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) throws Exception {
+        //both the subscribeOn() and observeOn() operator
+        CountDownLatch latch = new CountDownLatch(1);
+        Observable<Integer> range = Observable.range(20, 3)
+                .subscribeOn(Schedulers.newThread())
+                .doOnEach(debug("Source"));
+
+        Observable<Character> chars = range
+                .observeOn(Schedulers.io())
+                .map(n -> n + 48)
+                .doOnEach(debug("+48 ", "   "))
+                .observeOn(Schedulers.computation())
+                .map(n -> Character.toChars(n))
+                .map(c -> c[0])
+                .doOnEach(debug("Chars ", "   "))
+                .finallyDo(() -> latch.countDown());
+        chars.subscribe();
+        latch.await();
+    }
+
+    public static void main13(String[] args) throws Exception {
         // observeOn operator it executes the part of the chain from its place within it, onwards.
         CountDownLatch latch = new CountDownLatch(1);
         Observable<Integer> range = Observable
