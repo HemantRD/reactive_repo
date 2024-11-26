@@ -1,6 +1,7 @@
 package com.example.demo.stream.reactive;
 
 import com.example.demo.stream.reactive.book.CreateObservable;
+import com.example.demo.stream.reactive.book.Helpers;
 import com.google.gson.Gson;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -15,6 +16,9 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -28,6 +32,20 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) throws Exception {
+        // we may get rx.exceptions.MissingBackpressureException for large files
+        Path path = Paths.get("src", "main", "resources");
+        Observable<String> data = CreateObservable.listFolderViaUsing(path, "*")
+                .flatMap(file -> {
+                    if (!Files.isDirectory(file)) {
+                        return CreateObservable.from(file).subscribeOn(Schedulers.io());
+                    }
+                    return Observable.empty();
+                });
+        Helpers.subscribePrint(data, "File");
+        Thread.sleep(250);
+    }
+
+    public static void main16(String[] args) throws Exception {
         // We will request the profiles of the followers in parallel.
         try (CloseableHttpAsyncClient client = HttpAsyncClients.createDefault()) {
             CountDownLatch latch = new CountDownLatch(1);
