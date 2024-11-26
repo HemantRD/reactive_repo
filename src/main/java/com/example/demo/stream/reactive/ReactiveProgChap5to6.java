@@ -32,6 +32,28 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) throws Exception {
+        // Using the sample() operator not working as expected
+        Path path = Paths.get("src", "main", "resources");
+        CountDownLatch latch = new CountDownLatch(7);
+        Observable<String> data = CreateObservable.listFolderViaUsing(path, "*")
+                .flatMap(file -> {
+                    if (!Files.isDirectory(file)) {
+                        return CreateObservable.from(file).subscribeOn(Schedulers.io());
+                    }
+                    return Observable.empty();
+                });
+        Helpers.subscribePrint(
+                data.sample(Observable.interval(
+                                        100L, TimeUnit.MILLISECONDS).take(10)
+                                .concatWith(Observable.interval(
+                                        200L, TimeUnit.MILLISECONDS)))
+                        .doOnCompleted(() -> latch.countDown()),
+                "sample(Observable)");
+        latch.await(15L, TimeUnit.SECONDS);
+        Thread.sleep(20000);
+    }
+
+    public static void main17(String[] args) throws Exception {
         // we may get rx.exceptions.MissingBackpressureException for large files
         Path path = Paths.get("src", "main", "resources");
         Observable<String> data = CreateObservable.listFolderViaUsing(path, "*")
