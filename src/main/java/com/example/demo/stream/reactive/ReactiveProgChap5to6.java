@@ -1,5 +1,6 @@
 package com.example.demo.stream.reactive;
 
+import com.example.demo.stream.reactive.book.CreateObservable;
 import com.google.gson.Gson;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -27,6 +28,35 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) throws Exception {
+        // We will request the profiles of the followers in parallel.
+        try (CloseableHttpAsyncClient client = HttpAsyncClients.createDefault()) {
+            CountDownLatch latch = new CountDownLatch(1);
+            client.start();
+            Observable<Map> response = CreateObservable.requestJson(
+                    client,
+                    "https://api.github.com/users/meddle0x53/followers"
+            );
+            response
+                    .map(followerJson -> followerJson.get("url"))
+                    .cast(String.class)
+                    .flatMap(profileUrl -> CreateObservable
+                            .requestJson(client, profileUrl)
+                            .subscribeOn(Schedulers.io())
+                            .filter(res -> res.containsKey("followers"))
+                            .map(json -> // (4)
+                                    json.get("login") + " : " +
+                                            json.get("followers"))
+                    )
+                    .doOnNext(follower -> System.out.println(follower))
+                    .count()
+                    .doOnCompleted(() -> latch.countDown())
+                    .subscribe(sum -> System.out.println("meddle0x53 : " + sum));
+            latch.await();
+        }
+        Thread.sleep(20000);
+    }
+
+    public static void main15(String[] args) throws Exception {
         // Parallelism implementation 5 threads
         Observable<Integer> range = Observable
                 .range(20, 5)
