@@ -32,6 +32,33 @@ import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePri
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) throws Exception {
+        // Using the debounce() operator not working as expected
+        Path path = Paths.get("src", "main", "resources");
+        Observable<String> data = CreateObservable.listFolderViaUsing(path, "*")
+                .flatMap(file -> {
+                    if (!Files.isDirectory(file)) {
+                        return CreateObservable.from(file).subscribeOn(Schedulers.io());
+                    }
+                    return Observable.empty();
+                });
+        Observable<Object> sampler = Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(0);
+                Thread.sleep(100L);
+                subscriber.onNext(10);
+                Thread.sleep(150L);
+                subscriber.onCompleted();
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+        }).repeat().subscribeOn(Schedulers.computation());
+        data = data.sample(sampler).debounce(150L, TimeUnit.MILLISECONDS);
+        subscribePrint(data, "debounce");
+
+        Thread.sleep(20000);
+    }
+
+    public static void main18(String[] args) throws Exception {
         // Using the sample() operator not working as expected
         Path path = Paths.get("src", "main", "resources");
         CountDownLatch latch = new CountDownLatch(7);
