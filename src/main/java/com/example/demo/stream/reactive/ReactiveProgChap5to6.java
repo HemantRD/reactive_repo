@@ -46,6 +46,11 @@ public class ReactiveProgChap5to6 {
         Helpers.subscribePrint(data
                 .window(3L, 200L, TimeUnit.MILLISECONDS).flatMap(o -> o), "Too many lines2");
 
+
+        // Using the onBackpressureBuffer() operator
+        Helpers.subscribePrint(data.onBackpressureBuffer(10000), "onBackpressureBuffer(int)"
+        );
+
         Thread.sleep(20000);
     }
 
