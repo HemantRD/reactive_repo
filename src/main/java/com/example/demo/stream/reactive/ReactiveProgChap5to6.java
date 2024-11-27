@@ -41,6 +41,11 @@ public class ReactiveProgChap5to6 {
                     return Observable.empty();
                 });
         Helpers.subscribePrint(data.buffer(1, 300), "Too many lines");
+
+        // Using the window() operator not clear to me
+        Helpers.subscribePrint(data
+                .window(3L, 200L, TimeUnit.MILLISECONDS).flatMap(o -> o), "Too many lines2");
+
         Thread.sleep(20000);
     }
 
