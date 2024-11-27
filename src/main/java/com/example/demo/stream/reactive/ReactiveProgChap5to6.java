@@ -26,12 +26,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.example.demo.stream.reactive.ReactiveProgChap1To4.blockingSubscribePrint;
-import static com.example.demo.stream.reactive.ReactiveProgChap1To4.subscribePrint;
+import static com.example.demo.stream.reactive.ReactiveProgChap1To4.*;
 
 public class ReactiveProgChap5to6 {
 
     public static void main(String[] args) throws Exception {
+        // Using the buffer() operator not clear to me
+        Path path = Paths.get("src", "main", "resources");
+        Observable<String> data = CreateObservable.listFolderViaUsing(path, "*")
+                .flatMap(file -> {
+                    if (!Files.isDirectory(file)) {
+                        return from(file);
+                    }
+                    return Observable.empty();
+                });
+        Helpers.subscribePrint(data.buffer(1, 300), "Too many lines");
+        Thread.sleep(20000);
+    }
+
+    public static void main19(String[] args) throws Exception {
         // Using the debounce() operator not working as expected
         Path path = Paths.get("src", "main", "resources");
         Observable<String> data = CreateObservable.listFolderViaUsing(path, "*")
