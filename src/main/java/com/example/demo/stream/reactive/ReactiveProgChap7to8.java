@@ -36,6 +36,7 @@ public class ReactiveProgChap7to8 {
 
     @Test
     public void testAsynchronousInBlockingWay() {
+        //testAsynchronousInBlockingWay, interval is asynchronous
         Observable.interval(100L, TimeUnit.MILLISECONDS)
                 .take(5)
                 .toBlocking()
