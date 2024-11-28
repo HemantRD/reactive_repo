@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
+import rx.observers.TestSubscriber;
 
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +18,22 @@ public class ReactiveProgChap7to8 {
     public void before() {
         tested = sorted((a, b) -> a.compareTo(b), "Star", "Bar", "Car", "War", "Far", "Jar");
         expected = Arrays.asList("Bar", "Car", "Far", "Jar", "Star", "War");
+    }
+
+    @Test
+    public void testUsingTestSubscriber() {
+        //testUsingTestSubscriber
+        TestSubscriber<String> subscriber = new TestSubscriber<>();
+        tested.subscribe(subscriber);
+        Assert.assertEquals(expected, subscriber.getOnNextEvents());
+        Assert.assertSame(1, subscriber.getOnCompletedEvents().size());
+        Assert.assertTrue(subscriber.getOnErrorEvents().isEmpty());
+        Assert.assertTrue(subscriber.isUnsubscribed());
+        // another way of test
+        subscriber.assertReceivedOnNext(expected);
+        subscriber.assertTerminalEvent();
+        subscriber.assertNoErrors();
+        subscriber.assertUnsubscribed();
     }
 
     @Test
