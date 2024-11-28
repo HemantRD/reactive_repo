@@ -57,10 +57,10 @@ public class ReactiveProgChap7to8 {
         System.out.println(iterator.next());
 
         // test latest() method
-        Iterable<Long> latest = Observable.interval(2000L, TimeUnit.MILLISECONDS).toBlocking().latest();
+        Iterable<Long> latest = Observable.interval(1000L, TimeUnit.MILLISECONDS).toBlocking().latest();
         iterator = latest.iterator();
         System.out.println(iterator.next());
-        Thread.sleep(7500);
+        Thread.sleep(5500l);
         System.out.println(iterator.next());
         System.out.println(iterator.next());
     }
