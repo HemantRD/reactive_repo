@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +30,28 @@ public class ReactiveProgChap7to8 {
         Assert.assertTrue(data.isCompleted());
         Assert.assertNull(data.getError());
         Assert.assertEquals(expected, data.getResult());
+    }
+
+    @Test
+    public void testDifferentMethods() {
+        // count method example
+        Observable
+                .range(10, 100).
+                count()
+                .subscribe(System.out::println);
+
+        //toList method example
+        Observable
+                .range(5, 15)
+                .toList()
+                .subscribe(System.out::println);
+
+        //toList with toBlocking method example
+        List<Integer> single = Observable
+                .range(5, 15)
+                .toList()
+                .toBlocking().single();
+        System.out.println(single);
     }
 
     @Test
