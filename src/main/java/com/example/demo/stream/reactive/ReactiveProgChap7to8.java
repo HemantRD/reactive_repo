@@ -5,10 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ReactiveProgChap7to8 {
@@ -48,6 +45,24 @@ public class ReactiveProgChap7to8 {
 
         Integer last = Observable.range(3, 13).toBlocking().last();
         System.out.println(last);
+    }
+
+    @Test
+    public void testNextMethod() throws Exception {
+        // test next() method
+        Iterable<Long> next = Observable.interval(100L, TimeUnit.MILLISECONDS).toBlocking().next();
+        Iterator<Long> iterator = next.iterator();
+        System.out.println(iterator.next());
+        System.out.println(iterator.next());
+        System.out.println(iterator.next());
+
+        // test latest() method
+        Iterable<Long> latest = Observable.interval(2000L, TimeUnit.MILLISECONDS).toBlocking().latest();
+        iterator = latest.iterator();
+        System.out.println(iterator.next());
+        Thread.sleep(7500);
+        System.out.println(iterator.next());
+        System.out.println(iterator.next());
     }
 
     @SafeVarargs
