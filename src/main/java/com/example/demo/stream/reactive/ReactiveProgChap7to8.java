@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ReactiveProgChap7to8 {
 
@@ -31,6 +32,21 @@ public class ReactiveProgChap7to8 {
         Assert.assertTrue(data.isCompleted());
         Assert.assertNull(data.getError());
         Assert.assertEquals(expected, data.getResult());
+    }
+
+    @Test
+    public void testAsynchronousInBlockingWay() {
+        Observable.interval(100L, TimeUnit.MILLISECONDS)
+                .take(5)
+                .toBlocking()
+                .forEach(System.out::println);
+        System.out.println("END");
+
+        Integer first = Observable.range(3, 13).toBlocking().first();
+        System.out.println(first);
+
+        Integer last = Observable.range(3, 13).toBlocking().last();
+        System.out.println(last);
     }
 
     @SafeVarargs
