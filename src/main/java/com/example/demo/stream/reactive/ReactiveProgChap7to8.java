@@ -33,6 +33,12 @@ public class ReactiveProgChap7to8 {
     }
 
     @Test
+    public void testUsingBlockingObservable() {
+        List<String> result = tested.toList().toBlocking().single();
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
     public void testDifferentMethods() {
         // count method example
         Observable
