@@ -1,13 +1,19 @@
 package com.example.demo.stream.reactive;
 
+import com.example.demo.stream.reactive.book.CreateObservable;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
 import rx.observers.TestSubscriber;
+import rx.schedulers.Schedulers;
+import rx.schedulers.TestScheduler;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ReactiveProgChap7to8 {
 
@@ -21,14 +27,30 @@ public class ReactiveProgChap7to8 {
     }
 
     @Test
+    public void testBehaveAsNormalIntervalWithOneGap() {
+        TestScheduler testScheduler = Schedulers.test();
+        Observable<Long> interval = CreateObservable.interval(Arrays.asList(100L), TimeUnit.MILLISECONDS, testScheduler);
+        TestSubscriber<Long> subscriber = new TestSubscriber<>();
+        interval.subscribe(subscriber);
+        assertTrue(subscriber.getOnNextEvents().isEmpty());
+        testScheduler.advanceTimeBy(101L, TimeUnit.MILLISECONDS);
+        assertEquals(Arrays.asList(0l), subscriber.getOnNextEvents());
+        testScheduler.advanceTimeBy(101L, TimeUnit.MILLISECONDS);
+        assertEquals(Arrays.asList(0l, 1l),
+                subscriber.getOnNextEvents());
+        testScheduler.advanceTimeTo(1L, TimeUnit.SECONDS);
+        assertEquals(Arrays.asList(0l, 1l, 2l, 3l, 4l, 5l, 6l, 7l, 8l, 9l), subscriber.getOnNextEvents());
+    }
+
+    @Test
     public void testUsingTestSubscriber() {
         //testUsingTestSubscriber
         TestSubscriber<String> subscriber = new TestSubscriber<>();
         tested.subscribe(subscriber);
         Assert.assertEquals(expected, subscriber.getOnNextEvents());
         Assert.assertSame(1, subscriber.getOnCompletedEvents().size());
-        Assert.assertTrue(subscriber.getOnErrorEvents().isEmpty());
-        Assert.assertTrue(subscriber.isUnsubscribed());
+        assertTrue(subscriber.getOnErrorEvents().isEmpty());
+        assertTrue(subscriber.isUnsubscribed());
         // another way of test
         subscriber.assertReceivedOnNext(expected);
         subscriber.assertTerminalEvent();
@@ -43,7 +65,7 @@ public class ReactiveProgChap7to8 {
                 (e) -> data.setError(e),
                 () -> data.setCompleted(true));
 
-        Assert.assertTrue(data.isCompleted());
+        assertTrue(data.isCompleted());
         Assert.assertNull(data.getError());
         Assert.assertEquals(expected, data.getResult());
     }
