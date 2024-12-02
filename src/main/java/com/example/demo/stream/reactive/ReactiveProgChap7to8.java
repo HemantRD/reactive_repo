@@ -26,10 +26,11 @@ import static org.junit.Assert.assertTrue;
 
 public class ReactiveProgChap7to8 {
 
-    private Observable<String> tested;
-    private List<String> expected;
-
     public static void main(String[] args) {
+
+    }
+
+    public static void main1(String[] args) {
         // close resources automatically with using (i.e close CloseableHttpAsyncClient) not working
         String url = "https://api.github.com/orgs/ReactiveX/repos";
         Observable<ObservableHttpResponse> response = request(url);
@@ -68,6 +69,9 @@ public class ReactiveProgChap7to8 {
         };
         return Observable.using(resourceFactory, observableFactory, disposeAction);
     }
+
+    private Observable<String> tested;
+    private List<String> expected;
 
     @Before
     public void before() {
