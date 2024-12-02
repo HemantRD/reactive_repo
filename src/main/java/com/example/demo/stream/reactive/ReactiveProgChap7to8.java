@@ -27,6 +27,23 @@ import static org.junit.Assert.assertTrue;
 public class ReactiveProgChap7to8 {
 
     public static void main(String[] args) {
+        //cache the response example not working
+        String url = "https://api.github.com/orgs/ReactiveX/repos";
+        Observable<ObservableHttpResponse> response = request(url);
+        System.out.println("Not yet subscribed.");
+        Observable<String> stringResponse = response
+                .flatMap(resp -> resp.getContent()
+                        .map(bytes -> new String(bytes)))
+                .retry(5)
+                .cast(String.class)
+                .map(String::trim)
+                .cache();
+
+        System.out.println("Subscribe 1:");
+        System.out.println(stringResponse.toBlocking().first());
+
+        System.out.println("Subscribe 2:");
+        System.out.println(stringResponse.toBlocking().first());
 
     }
 
