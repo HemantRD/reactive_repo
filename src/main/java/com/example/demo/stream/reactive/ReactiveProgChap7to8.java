@@ -1,14 +1,23 @@
 package com.example.demo.stream.reactive;
 
 import com.example.demo.stream.reactive.book.CreateObservable;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.nio.client.HttpAsyncClient;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
+import rx.apache.http.ObservableHttp;
+import rx.apache.http.ObservableHttpResponse;
+import rx.functions.Action1;
+import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 import rx.schedulers.TestScheduler;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +28,46 @@ public class ReactiveProgChap7to8 {
 
     private Observable<String> tested;
     private List<String> expected;
+
+    public static void main(String[] args) {
+        // close resources automatically with using (i.e close CloseableHttpAsyncClient) not working
+        String url = "https://api.github.com/orgs/ReactiveX/repos";
+        Observable<ObservableHttpResponse> response = request(url);
+
+        System.out.println("Not yet subscribed.");
+
+        Observable<String> stringResponse = response.<String>flatMap(resp -> resp.getContent()
+                .map(bytes -> new String(bytes, StandardCharsets.UTF_8))
+                .retry(5)
+                .map(String::trim));
+
+        System.out.println("Subscribe 1:");
+        System.out.println(stringResponse.toBlocking().first());
+
+        System.out.println("Subscribe 2:");
+        System.out.println(stringResponse.toBlocking().first());
+    }
+
+    public static Observable<ObservableHttpResponse> request(String url) {
+        Func0<CloseableHttpAsyncClient> resourceFactory = () -> {
+            CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
+            client.start();
+            System.out.println(Thread.currentThread().getName() + " : Created and started the client.");
+            return client;
+        };
+        Func1<HttpAsyncClient, Observable<ObservableHttpResponse>> observableFactory = (client) -> {
+            System.out.println(Thread.currentThread().getName() + " : About to create Observable.");
+            return ObservableHttp.createGet(url, client).toObservable();
+        };
+        Action1<CloseableHttpAsyncClient> disposeAction = (client) -> {
+            try {
+                System.out.println(Thread.currentThread().getName() + " : Closing the client");
+                client.close();
+            } catch (Exception e) {
+            }
+        };
+        return Observable.using(resourceFactory, observableFactory, disposeAction);
+    }
 
     @Before
     public void before() {
