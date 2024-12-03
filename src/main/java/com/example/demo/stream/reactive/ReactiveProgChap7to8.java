@@ -27,7 +27,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ReactiveProgChap7to8 {
+
     public static void main(String[] args) {
+        //filter on custom operator using compose operator
+        Observable<String> tested = Observable.just("One", "Two", "Three", "Four", "Five", "June", "July").compose(new OddFilter<String>());
+        subscribePrint(tested, "Compose Operator");
+    }
+
+    public static class OddFilter<T> implements Observable.Transformer<T, T> {
+
+        @Override
+        public Observable<T> call(Observable<T> tObservable) {
+            return tObservable.lift(new Indexed<>(1L))
+                    .filter(pair -> pair.getLeft() % 2 == 1)
+                    .map(pair -> pair.getRight());
+        }
+    }
+
+    public static void main3(String[] args) {
         // creating custom operator
         Observable<Pair<Long, String>> observable = Observable
                 .just("a", "b", "c", "d", "e")
