@@ -33,6 +33,13 @@ public class ReactiveProgChap7to8 {
                 .just("a", "b", "c", "d", "e")
                 .lift(new Indexed<String>());
         subscribePrint(observable, "Custom Operator");
+
+        System.out.println("\n\n\n");
+        //achieve above thing in different in built way
+        Observable<Pair<Long, String>> indexed = Observable.zip(Observable.just("a", "b", "c", "d", "e"),
+                Observable.range(0, 100),
+                (s, i) -> new Pair<Long, String>((long) i, s));
+        subscribePrint(indexed, "Indexed, no lift");
     }
 
     public static class Pair<L, R> {
