@@ -9,8 +9,33 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Concurrency {
 
-    static String[] dogs1 = {"boi", "clover", "charis"};
-    static String[] dogs2 = {"aiko", "zooey", "biscuit"};
+    public static void main(String[] args) throws Exception {
+        // CyclicBarrier example
+        List<String> result = new ArrayList<>();
+        String[] dogs1 = {"boi", "clover", "charis"};
+        String[] dogs2 = {"aiko", "zooey", "biscuit"};
+
+        //number of threads that will wait at the barrier and a Runnable that will
+        //be run by the last thread to reach the barrier
+        CyclicBarrier barrier = new CyclicBarrier(2, () -> {
+            for (int i = 0; i < dogs1.length; i++) {
+                result.add(dogs1[i]);
+            }
+            for (int i = 0; i < dogs2.length; i++) {
+                result.add(dogs2[i]);
+            }
+            System.out.println(Thread.currentThread().getName() + " Result:" + result);
+        });
+
+        Thread t1 = new Thread(new ProcessDogs(dogs1, barrier));
+        t1.setName("A");
+        Thread t2 = new Thread(new ProcessDogs(dogs2, barrier));
+        t2.setName("B");
+
+        t1.start();
+        t2.start();
+        System.out.println("Main Thread is done");
+    }
 
     static class ProcessDogs implements Runnable {
         String dogs[];
@@ -40,31 +65,6 @@ public class Concurrency {
             }
             System.out.println(Thread.currentThread().getName() + " is done!");
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        // CyclicBarrier example
-        List<String> result = new ArrayList<>();
-        //number of threads that will wait at the barrier and a Runnable that will
-        //be run by the last thread to reach the barrier
-        CyclicBarrier barrier = new CyclicBarrier(2, () -> {
-            for (int i = 0; i < dogs1.length; i++) {
-                result.add(dogs1[i]);
-            }
-            for (int i = 0; i < dogs2.length; i++) {
-                result.add(dogs2[i]);
-            }
-            System.out.println(Thread.currentThread().getName() + " Result:" + result);
-        });
-
-        Thread t1 = new Thread(new ProcessDogs(dogs1, barrier));
-        t1.setName("A");
-        Thread t2 = new Thread(new ProcessDogs(dogs2, barrier));
-        t2.setName("B");
-
-        t1.start();
-        t2.start();
-        System.out.println("Main Thread is done");
     }
 
     static class ArrayListRunnable implements Runnable {
