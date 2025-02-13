@@ -9,6 +9,23 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Concurrency {
 
     public static void main(String[] args) {
+        // newCachedThreadPool example
+        Runnable runnable = () -> {
+            System.out.println("My Name is " + Thread.currentThread().getName() + " id -> " + Thread.currentThread().getId());
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        ExecutorService service = Executors.newCachedThreadPool();
+        service.execute(runnable);
+        service.execute(runnable);
+        service.shutdown();
+    }
+
+
+    public static void main2(String[] args) {
         // custom executor example
         Runnable runnable = () -> {
             System.out.println("My Name is " + Thread.currentThread().getName() + " id -> " + Thread.currentThread().getId());
