@@ -3,13 +3,36 @@ package com.example.demo.stream.concurrencychap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Concurrency {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        // custom executor example
+        Runnable runnable = () -> {
+            System.out.println("My Name is " + Thread.currentThread().getName() + " id -> " + Thread.currentThread().getId());
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        Executor executor = new NewThreadExecutor();
+        executor.execute(runnable);
+        executor.execute(runnable);
+    }
+
+    static class NewThreadExecutor implements Executor {
+
+        @Override
+        public void execute(Runnable command) {
+            Thread t = new Thread(command);
+            t.start();
+        }
+    }
+
+    public static void main1(String[] args) throws Exception {
         // CyclicBarrier example
         List<String> result = new ArrayList<>();
         String[] dogs1 = {"boi", "clover", "charis"};
