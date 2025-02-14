@@ -10,6 +10,24 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Concurrency {
 
     public static void main(String[] args) {
+        // shutdown executor different ways
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.shutdown(); // no more new tasks but finish existing tasks
+
+        // wait 2 seconds for running tasks to finish
+        try {
+            boolean term = executorService.awaitTermination(2, TimeUnit.SECONDS);
+        } catch (InterruptedException ex1) {
+            // did not wait the full 2 seconds
+        } finally {
+            if (!executorService.isTerminated()) // are all tasks done?
+            {
+                List<Runnable> unfinished = executorService.shutdownNow();// a collection of the unfinished tasks
+            }
+        }
+    }
+
+    public static void main7(String[] args) {
         // Callable example
         Callable<Integer> callable = () -> {
             int count = ThreadLocalRandom.current().nextInt(1, 10);
