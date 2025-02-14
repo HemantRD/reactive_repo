@@ -1,8 +1,5 @@
 package com.example.demo.stream.concurrencychap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,9 +9,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Concurrency {
 
-    private static final Logger log = LoggerFactory.getLogger(Concurrency.class);
-
     public static void main(String[] args) {
+        // Callable example
+        Callable<Integer> callable = () -> {
+            int count = ThreadLocalRandom.current().nextInt(1, 10);
+            for (int i = 1; i <= count; i++) {
+                Thread.sleep(5000);
+                System.out.println("Running...." + i);
+            }
+            return count;
+        };
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Future<Integer> future = executorService.submit(callable);
+        try {
+            Integer result = future.get();
+            System.out.println("Result is :" + result);
+        } catch (ExecutionException | InterruptedException e) {
+            System.out.println("Error" + e.getMessage());
+        }
+        executorService.shutdown();
+    }
+
+    public static void main6(String[] args) {
         //ScheduledExecutorService
         Runnable r = () -> {
             System.out.println("waiting for 3 seconds to complete the task");
