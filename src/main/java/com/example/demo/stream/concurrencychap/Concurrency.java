@@ -7,8 +7,23 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Concurrency {
-
     public static void main(String[] args) {
+        // newSingleThreadExecutor example
+        Runnable runnable = () -> {
+            System.out.println("My Name is " + Thread.currentThread().getName() + " id -> " + Thread.currentThread().getId());
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.execute(runnable);
+        service.execute(runnable);
+        service.shutdown();
+    }
+
+    public static void main4(String[] args) {
         // newFixedThreadPool example
         Runnable runnable = () -> {
             System.out.println("My Name is " + Thread.currentThread().getName() + " id -> " + Thread.currentThread().getId());
