@@ -1,5 +1,9 @@
 package com.example.demo.stream.concurrencychap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +11,31 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Concurrency {
+
+    private static final Logger log = LoggerFactory.getLogger(Concurrency.class);
+
     public static void main(String[] args) {
+        //ScheduledExecutorService
+        Runnable r = () -> {
+            System.out.println("waiting for 3 seconds to complete the task");
+            try {
+                Thread.sleep(6000);
+                System.out.println(LocalDateTime.now() + " My name is " + Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        // run once after a delay of 10 seconds
+        // scheduledExecutorService.schedule(r, 10, TimeUnit.SECONDS);
+        // begin after 2 seconds delay and begin again every 5 seconds
+        //scheduledExecutorService.scheduleAtFixedRate(r, 2, 5, TimeUnit.SECONDS);
+        // begin after 2 seconds delay and begin again 5 seconds after completing last execution
+        scheduledExecutorService.scheduleWithFixedDelay(r, 2, 5, TimeUnit.SECONDS);
+
+    }
+
+    public static void main5(String[] args) {
         // newSingleThreadExecutor example
         Runnable runnable = () -> {
             System.out.println("My Name is " + Thread.currentThread().getName() + " id -> " + Thread.currentThread().getId());
