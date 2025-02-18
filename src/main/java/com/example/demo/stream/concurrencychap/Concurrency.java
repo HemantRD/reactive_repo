@@ -10,6 +10,44 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Concurrency {
 
     public static void main(String[] args) {
+        // Parallel Fork/Join example
+        int[] data = new int[10000000];
+        ForkJoinPool forkJoinPool = new ForkJoinPool(2);
+        RandomInitRecursiveAction action = new RandomInitRecursiveAction(data, 0, data.length);
+        forkJoinPool.invoke(action);
+    }
+
+    static class RandomInitRecursiveAction extends RecursiveAction {
+        private static final int THRESHOLD = 10000;
+        private int[] data;
+        private int start;
+        private int end;
+
+        public RandomInitRecursiveAction(int[] data, int start, int end) {
+            this.data = data;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        protected void compute() {
+            if (end - start <= THRESHOLD) {
+                for (int i = start; i < end; i++) {
+                    data[i] = ThreadLocalRandom.current().nextInt();
+                    System.out.println(Thread.currentThread().getName());
+                }
+            } else {
+                int halfway = ((end - start) / 2) + start;
+                RandomInitRecursiveAction a1 = new RandomInitRecursiveAction(data, start, halfway);
+                a1.fork();
+                RandomInitRecursiveAction a2 = new RandomInitRecursiveAction(data, halfway, end);
+                a2.compute();
+                a1.join();
+            }
+        }
+    }
+
+    public static void main8(String[] args) {
         // shutdown executor different ways
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.shutdown(); // no more new tasks but finish existing tasks
