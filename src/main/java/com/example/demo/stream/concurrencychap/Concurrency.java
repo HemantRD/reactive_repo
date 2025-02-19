@@ -1,7 +1,10 @@
 package com.example.demo.stream.concurrencychap;
 
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
@@ -10,6 +13,69 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Concurrency {
 
     public static void main(String[] args) {
+        // sort big array using forkJoin
+        int[] data = new int[10000000];
+        ForkJoinPool forkJoinPool = new ForkJoinPool(2);
+        RandomInitRecursiveAction action = new RandomInitRecursiveAction(data, 0, data.length);
+        forkJoinPool.invoke(action);
+        Arrays.stream(data).forEach(r -> System.out.print(r + ","));
+
+        ForkJoinPool forkJoinPool2 = new ForkJoinPool(2);
+        SortRecursiveAction action2 = new SortRecursiveAction(data, 0, data.length);
+        forkJoinPool2.invoke(action2);
+        System.out.println("====================");
+        System.out.println("====================");
+        Arrays.stream(data).forEach(r -> System.out.print(r + ","));
+
+    }
+
+    static class SortRecursiveAction extends RecursiveAction {
+        private static final int THRESHOLD = 1000;
+        private int data[];
+        private int start;
+        private int end;
+
+        public SortRecursiveAction(int[] data, int start, int end) {
+            this.data = data;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        protected void compute() {
+            if (end - start <= THRESHOLD) {
+                Arrays.sort(data, start, end);
+            } else {
+                int halfWay = ((end - start) / 2) + start;
+                SortRecursiveAction a1 = new SortRecursiveAction(data, start, halfWay);
+                SortRecursiveAction a2 = new SortRecursiveAction(data, halfWay, end);
+                invokeAll(a1, a2);
+                if (data[halfWay - 1] <= data[halfWay]) {
+                    return;
+                }
+                int[] temp = new int[end - start];
+                int s1 = start, s2 = halfWay, d = 0;
+                while (s1 < halfWay && s2 < end) {
+                    if (data[s1] < data[s2]) {
+                        temp[d++] = data[s1++];
+                    } else if (data[s1] > data[s2]) {
+                        temp[d++] = data[s2++];
+                    } else {
+                        temp[d++] = data[s1++];
+                        temp[d++] = data[s2++];
+                    }
+                }
+                if (s1 != halfWay) {
+                    System.arraycopy(data, s1, temp, d, temp.length - d);
+                } else if (s2 != end) {
+                    System.arraycopy(data, s2, temp, d, temp.length - d);
+                }
+                System.arraycopy(temp, 0, data, start, temp.length);
+            }
+        }
+    }
+
+    public static void main10(String[] args) {
         // Parallel Fork/Join example return value
         int[] data = new int[10000000];
         ForkJoinPool forkJoinPool = new ForkJoinPool(2);
