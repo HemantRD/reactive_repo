@@ -7,9 +7,29 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.IntStream;
 
 public class Concurrency {
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+
+    public static void main(String[] args) {
+        // stateful count increment is not thread safe. each run differ the result
+        class Count {
+            int counter = 0;
+        }
+        Count count = new Count();
+        IntStream stream = IntStream.range(0, 10000);
+        int sum = stream.parallel().filter(i -> {
+            if (i % 10 == 0) {
+                count.counter++;
+                return true;
+            }
+            return false;
+        }).sum();
+        System.out.println("sum: " + sum + ", count: " + count.counter);
+
+    }
+
+    public static void main13(String[] args) throws ExecutionException, InterruptedException {
         // parallel stream with ForkJoinPool
         List<Integer> numList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         ForkJoinPool forkJoinPool = new ForkJoinPool(2);
