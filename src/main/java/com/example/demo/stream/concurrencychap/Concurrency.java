@@ -9,8 +9,17 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Concurrency {
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        // parallel stream with ForkJoinPool
+        List<Integer> numList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        ForkJoinPool forkJoinPool = new ForkJoinPool(2);
+        int sum = forkJoinPool.submit(() ->
+                numList.stream().parallel().peek(i -> System.out.println(":" + Thread.currentThread().getName() + " is"))
+                        .mapToInt(r -> r).sum()).get();
+        int sum2 = forkJoinPool.submit(() ->
+                numList.parallelStream().peek(i -> System.out.println(":" + Thread.currentThread().getName() + " is"))
+                        .mapToInt(r -> r).sum()).get();
+        System.out.println("FJP with 2 workers, sum is :" + sum + sum2);
     }
 
     public static void main12(String[] args) {
