@@ -1,7 +1,9 @@
 package com.example.demo.stream.concurrencychap;
 
+import io.netty.buffer.PoolSubpageMetric;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 
+import javax.sound.midi.Soundbank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +15,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Concurrency {
 
     public static void main(String[] args) {
+        // parallel stream print thread name
+        List<Integer> numList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        int sum = numList.stream().parallel().peek(r -> System.out.println("My name is :" + Thread.currentThread().getName()))
+                .mapToInt(r -> r).sum();
+        System.out.println(sum);
+    }
+
+    public static void main11(String[] args) {
         // sort big array using forkJoin
         int[] data = new int[10000000];
         ForkJoinPool forkJoinPool = new ForkJoinPool(2);
