@@ -16,6 +16,15 @@ public class Concurrency {
         List<Integer> nums = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         Stream<Integer> s = nums.stream();
         System.out.println("Stream from List ordered? " + s.spliterator().hasCharacteristics(Spliterator.ORDERED));
+        //We can explicitly tell the stream to not worry about remaining ordered by calling the unordered()
+        List<Integer> nums1 = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        long sum = nums1.stream()
+                .unordered() // make the stream unordered
+                .parallel()
+                .mapToInt(n -> n)
+                .filter(i -> i % 2 == 0 ? true : false)
+                .sum();
+        System.out.println("Sum of evens is: " + sum);
     }
 
     public static void main17(String[] args) throws ExecutionException, InterruptedException {
