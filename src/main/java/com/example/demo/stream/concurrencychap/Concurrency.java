@@ -11,7 +11,36 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.IntStream;
 
 public class Concurrency {
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        // with parallel and 2 threads same benefit
+        final int SIZE = 400000000;
+        final int LIMIT = 5;
+        long sum = 0, startTime, endTime, duration;
+        ForkJoinPool forkJoinPool = new ForkJoinPool(2);
+        IntStream stream = IntStream.range(0, SIZE);
+        startTime = Instant.now().toEpochMilli();
+        sum = forkJoinPool.submit(() -> stream.parallel().limit(LIMIT).sum()).get();
+        endTime = Instant.now().toEpochMilli();
+        duration = endTime - startTime;
+        System.out.println("FJP Stream data summed in " + duration + " miliseconds; sum is: " + sum);
+    }
+
+    public static void main16(String[] args) throws ExecutionException, InterruptedException {
+        // without parallel same benefit
+        final int SIZE = 400000000;
+        final int LIMIT = 5;
+        long sum = 0, startTime, endTime, duration;
+        ForkJoinPool forkJoinPool = new ForkJoinPool(1);
+        IntStream stream = IntStream.range(0, SIZE);
+        startTime = Instant.now().toEpochMilli();
+        sum = forkJoinPool.submit(() -> stream.limit(LIMIT).sum()).get();
+        endTime = Instant.now().toEpochMilli();
+        duration = endTime - startTime;
+        System.out.println("FJP Stream data summed in " + duration + " miliseconds; sum is: " + sum);
+    }
+
+    public static void main15(String[] args) {
         // running without parallel stream
         final int SIZE = 1000000;
         final int LIMIT = 5;
