@@ -1,5 +1,6 @@
 package com.example.demo.stream.concurrencychap;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,8 +11,29 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.IntStream;
 
 public class Concurrency {
-
     public static void main(String[] args) {
+        // running without parallel stream
+        final int SIZE = 1000000;
+        final int LIMIT = 5;
+        long sum = 0, statTime, endTime, duration;
+        IntStream stream = IntStream.range(0, SIZE);
+        statTime = Instant.now().toEpochMilli();
+        sum = stream.limit(LIMIT).sum();
+        endTime = Instant.now().toEpochMilli();
+        duration = statTime = endTime;
+        System.out.println("Items summed in " + duration
+                + " milliseconds; sum is: " + sum);
+        // running with parallel stream hut the performance. atleast limit will not help here..
+        stream = IntStream.range(0, SIZE);
+        statTime = Instant.now().toEpochMilli();
+        sum = stream.parallel().limit(LIMIT).sum();
+        endTime = Instant.now().toEpochMilli();
+        duration = statTime = endTime;
+        System.out.println("Items summed in " + duration
+                + " milliseconds; sum is: " + sum);
+    }
+
+    public static void main14(String[] args) {
         // stateful count increment is not thread safe. each run differ the result
         class Count {
             int counter = 0;
