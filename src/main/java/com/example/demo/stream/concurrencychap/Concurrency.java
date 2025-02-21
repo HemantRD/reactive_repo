@@ -1,18 +1,24 @@
 package com.example.demo.stream.concurrencychap;
 
+import javax.swing.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Concurrency {
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) {
+        // check stream is ordered or not.
+        List<Integer> nums = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        Stream<Integer> s = nums.stream();
+        System.out.println("Stream from List ordered? " + s.spliterator().hasCharacteristics(Spliterator.ORDERED));
+    }
+
+    public static void main17(String[] args) throws ExecutionException, InterruptedException {
         // with parallel and 2 threads same benefit
         final int SIZE = 400000000;
         final int LIMIT = 5;
