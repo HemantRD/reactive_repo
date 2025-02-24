@@ -12,6 +12,15 @@ import java.util.stream.Stream;
 public class Concurrency {
 
     public static void main(String[] args) {
+        //This example illustrates that findAny() really does find any result
+        IntStream nums = IntStream.range(0, 20);
+        OptionalInt any = nums.parallel().peek(i -> System.out.println(i + ": " + Thread.currentThread().getName())).filter(
+                i -> i % 2 == 0 ? true : false
+        ).findAny();
+        any.ifPresent(System.out::println);
+    }
+
+    public static void main18(String[] args) {
         // check stream is ordered or not.
         List<Integer> nums = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         Stream<Integer> s = nums.stream();
