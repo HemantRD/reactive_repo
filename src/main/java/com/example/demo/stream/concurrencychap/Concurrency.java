@@ -17,8 +17,21 @@ public class Concurrency {
     public static final int MAX = 10;
     public static final int NUM = 5;
 
+    public static void main(String[] args) {
 
-    public static void main(String[] args) throws Exception {
+    }
+
+    public static void main21(String[] args) {
+        //parallel stream custom reduce operator
+        List<Integer> numList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        int product = numList.parallelStream().reduce(1, (v1, v2) -> v1 * v2);
+        System.out.println("Product is -> " + product);
+
+        Optional<Integer> product1 = numList.parallelStream().reduce((v1, v2) -> v1 * v2);
+        product1.ifPresent(System.out::println);
+    }
+
+    public static void main20(String[] args) throws Exception {
         // compare performance parallel, forkJoin and for loop
         int[] data2sum = new int[SIZE];
         long sum = 0, startTime, endTime, duration;
