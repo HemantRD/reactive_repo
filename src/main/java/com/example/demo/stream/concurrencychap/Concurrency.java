@@ -24,10 +24,10 @@ public class Concurrency {
     public static void main21(String[] args) {
         //parallel stream custom reduce operator
         List<Integer> numList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        int product = numList.parallelStream().unordered().reduce(1, (v1, v2) -> v1 * v2);
+        int product = numList.stream().unordered().parallel().reduce(1, (v1, v2) -> v1 * v2);
         System.out.println("Product is -> " + product);
 
-        Optional<Integer> product1 = numList.parallelStream().unordered().reduce((v1, v2) -> v1 * v2);
+        Optional<Integer> product1 = numList.stream().unordered().parallel().reduce((v1, v2) -> v1 * v2);
         product1.ifPresent(System.out::println);
     }
 
