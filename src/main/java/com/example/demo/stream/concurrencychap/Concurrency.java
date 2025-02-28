@@ -14,12 +14,16 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Concurrency {
-    public static final int SIZE = 400000000;
-    public static final int THRESHOLD = 1000;
-    public static final int MAX = 10;
-    public static final int NUM = 5;
 
     public static void main(String[] args) {
+        // self test question
+        Stream<List<String>> sDogNames = Stream.generate(() ->
+                Arrays.asList("boi", "aiko", "charis", "zooey", "clover")).limit(2).unordered();
+        sDogNames.parallel().flatMap(s -> s.stream()).map(s -> s.toUpperCase())
+                .forEach(System.out::println);
+    }
+
+    public static void main22(String[] args) {
 
         Dog boi = new Dog("boi", 30, 6);
         Dog clover = new Dog("clover", 35, 12);
@@ -52,6 +56,11 @@ public class Concurrency {
         Optional<Integer> product1 = numList.stream().unordered().parallel().reduce((v1, v2) -> v1 * v2);
         product1.ifPresent(System.out::println);
     }
+
+    public static final int SIZE = 400000000;
+    public static final int THRESHOLD = 1000;
+    public static final int MAX = 10;
+    public static final int NUM = 5;
 
     public static void main20(String[] args) throws Exception {
         // compare performance parallel, forkJoin and for loop
