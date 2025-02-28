@@ -1,5 +1,6 @@
 package com.example.demo.stream.concurrencychap;
 
+import com.example.demo.stream.lambdachap.Dog;
 import io.netty.handler.codec.http2.InboundHttp2ToHttpAdapter;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -18,6 +20,26 @@ public class Concurrency {
     public static final int NUM = 5;
 
     public static void main(String[] args) {
+
+        Dog boi = new Dog("boi", 30, 6);
+        Dog clover = new Dog("clover", 35, 12);
+        Dog zooey = new Dog("zooey", 45, 8);
+        List<Dog> dogs = new ArrayList<>();
+        dogs.add(boi);
+        dogs.add(clover);
+        dogs.add(zooey);
+        // side effect, code should be avoided ..
+        //The reason this fails is because we have multiple
+        //threads trying to access the List dogsOlderThan7 at the same time and
+        //dogsOlderThan7 is not thread-safe.
+        //List<Dog> olderThan7 = Collections.synchronizedList(new ArrayList<>());
+        List<Dog> olderThan7 = new ArrayList<>();
+        long count = dogs.stream().unordered().parallel().filter(d -> d.getWeight() > 7).peek(r -> olderThan7.add(r)).count();
+        System.out.println("count older than 7 is ->" + count + olderThan7);
+        // here we should use the collect method as below
+        List<Dog> olderThan7New = dogs.stream().unordered().parallel().filter(d -> d.getWeight() > 7).collect(Collectors.toList());
+        System.out.println(olderThan7New);
+
 
     }
 
