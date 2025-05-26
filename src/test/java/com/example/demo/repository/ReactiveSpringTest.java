@@ -308,4 +308,41 @@ class ReactiveSpringTest {
                 .expectNextMatches(p -> playerList.contains(p))
                 .verifyComplete();
     }
+
+    @Test
+    public void buffer() {
+        Flux<String> fruitFlux = Flux.just(
+                "apple", "orange", "banana", "kiwi", "strawberry");
+        Flux<List<String>> bufferedFlux = fruitFlux.buffer(3);
+        StepVerifier
+                .create(bufferedFlux)
+                .expectNext(Arrays.asList("apple", "orange", "banana"))
+                .expectNext(Arrays.asList("kiwi", "strawberry"))
+                .verifyComplete();
+    }
+
+    @Test
+    public void bufferAndFlatMap() throws Exception {
+        Flux.just(
+                        "apple", "orange", "banana", "kiwi", "strawberry")
+                .buffer(3)
+                .flatMap(x ->
+                        Flux.fromIterable(x)
+                                .map(y -> y.toUpperCase())
+                                .subscribeOn(Schedulers.parallel())
+                                .log()
+                ).subscribe();
+    }
+
+    @Test
+    public void collectList() {
+        Flux<String> fruitFlux = Flux.just(
+                "apple", "orange", "banana", "kiwi", "strawberry");
+        Mono<List<String>> fruitListMono = fruitFlux.collectList();
+        StepVerifier
+                .create(fruitListMono)
+                .expectNext(Arrays.asList(
+                        "apple", "orange", "banana", "kiwi", "strawberry"))
+                .verifyComplete();
+    }
 }
