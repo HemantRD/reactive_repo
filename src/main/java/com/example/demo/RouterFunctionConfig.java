@@ -1,14 +1,8 @@
 package com.example.demo;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.*;
-import static org.springframework.web
-        .reactive.function.server.RouterFunctions.route;
-import static org.springframework.web
-        .reactive.function.server.ServerResponse.ok;
-import static reactor.core.publisher.Mono.just;
-
 import com.example.demo.model.Person;
-import com.example.demo.repository.PersonRepository;
+import com.example.demo.r2dbc.Taco;
+import com.example.demo.r2dbc.TacoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +12,11 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
+import static org.springframework.web.reactive.function.server.RouterFunctions.route;
+import static org.springframework.web.reactive.function.server.ServerResponse.ok;
+import static reactor.core.publisher.Mono.just;
 
 @Configuration
 public class RouterFunctionConfig {
@@ -31,7 +30,7 @@ public class RouterFunctionConfig {
 
 
     @Autowired
-    private PersonRepository tacoRepo;
+    private TacoRepository tacoRepo;
 
     @Bean
     public RouterFunction<?> routerFunction() {
@@ -47,14 +46,14 @@ public class RouterFunctionConfig {
     }
 
     public Mono<ServerResponse> postTaco(ServerRequest request) {
-        return request.bodyToMono(Person.class)
+        return request.bodyToMono(Taco.class)
                 .flatMap(taco -> tacoRepo.save(taco))
                 .flatMap(savedTaco -> {
                     return ServerResponse
                             .created(URI.create(
-                                    "http:/ /localhost:8080/api/tacos/" +
+                                    "http://localhost:8080/api/tacos/" +
                                             savedTaco.getId()))
-                            .body(savedTaco, Person.class);
+                            .bodyValue(savedTaco);
                 });
     }
 
