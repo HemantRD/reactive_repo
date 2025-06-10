@@ -60,7 +60,7 @@ public class RouterFunctionConfig {
         return findById(id).flatMap(body -> {
             return ServerResponse.ok()
                     .bodyValue(body);
-        });
+        }).switchIfEmpty(ServerResponse.notFound().build());
     }
 
     // Nice code
