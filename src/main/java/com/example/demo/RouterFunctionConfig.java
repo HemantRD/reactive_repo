@@ -44,7 +44,7 @@ public class RouterFunctionConfig {
         return route(GET("/api/tacos").
                         and(queryParam("recent", t -> t != null)),
                 this::recents)
-                .andRoute(POST("/api/tacos"), this::postTaco)
+                .andRoute(GET("/api/tacos/{id}"), this::findById)
                 .andRoute(POST("/api/saveTacos"), req -> {
                     return saveTacoOrder(req);
                 });
@@ -55,16 +55,12 @@ public class RouterFunctionConfig {
                 .body(tacoRepo.findAll().take(12), Person.class);
     }
 
-    public Mono<ServerResponse> postTaco(ServerRequest request) {
-        return request.bodyToMono(Taco.class)
-                .flatMap(taco -> tacoRepo.save(taco))
-                .flatMap(savedTaco -> {
-                    return ServerResponse
-                            .created(URI.create(
-                                    "http://localhost:8080/api/tacos/" +
-                                            savedTaco.getId()))
-                            .bodyValue(savedTaco);
-                });
+    public Mono<ServerResponse> findById(ServerRequest request) {
+        final Long id = Long.parseLong(request.pathVariable("id"));
+        return findById(id).flatMap(body -> {
+            return ServerResponse.ok()
+                    .bodyValue(body);
+        });
     }
 
     // Nice code
@@ -81,6 +77,17 @@ public class RouterFunctionConfig {
                     return orderRepo.save(tacoOrder).flatMap(r -> {
                         return ServerResponse.ok().bodyValue(tacoOrder);
                     });
+                });
+    }
+
+    public Mono<TacoOrder> findById(Long id) {
+        return orderRepo.findById(id)
+                .flatMap(order -> {
+                    return tacoRepo.findAllById(order.getTacoIds())
+                            .map(taco -> {
+                                order.addTaco(taco);
+                                return order;
+                            }).last();
                 });
     }
 
