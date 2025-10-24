@@ -1,8 +1,16 @@
 package com.example.demo.spring.chap2;
 
 public class HelloWorld {
+    public static void main(String... args) {
+        MessageRenderer mr =
+                MessageSupportFactory.getInstance().getMessageRenderer();
+        MessageProvider mp =
+                MessageSupportFactory.getInstance().getMessageProvider();
+        mr.setMessageProvider(mp);
+        mr.render();
+    }
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         MessageRenderer mr = new StandardOutMessageRenderer();
         MessageProvider mp = new HelloWorldMessageProvider();
         mr.setMessageProvider(mp);
