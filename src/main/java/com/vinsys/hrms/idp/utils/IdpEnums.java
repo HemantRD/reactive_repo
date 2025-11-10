@@ -30,4 +30,18 @@ public class IdpEnums {
         }
     }
 
+    public enum ReportType {
+        SUMMARY("summary"),
+        DETAILED("detailed");
+        private String key;
+
+        ReportType(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    }
+
 }

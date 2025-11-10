@@ -38,6 +38,13 @@ public class ExcelHelper {
         return cell0;
     }
 
+    public static Cell createCell(Row row, int index, Double value, CellStyle style) {
+        Cell cell0 = row.createCell(index);
+        cell0.setCellValue(value);
+        cell0.setCellStyle(style);
+        return cell0;
+    }
+
     public static CellStyle getHeaderStyle(Workbook workbook) {
         CellStyle headerStyle = workbook.createCellStyle();
         Font headerFont = workbook.createFont();

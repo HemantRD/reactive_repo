@@ -72,10 +72,11 @@ public class IdpReportsController {
 
     @PostMapping("getTrainingCostReportMemberWise")
     HRMSBaseResponse<?> getCostMemberWise(@RequestParam(required = false) String keyword,
-                                                        @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
+                                          @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable,
+                                          @RequestParam String reportType) {
         HRMSBaseResponse<?> response;
         try {
-            response = idpReportsService.getCostMemberWise(keyword, pageable);
+            response = idpReportsService.getCostMemberWise(keyword, pageable, reportType);
             response.setApplicationVersion(props.getApp_version());
         } catch (HRMSException e) {
             log.error(e.getMessage(), e);
@@ -91,14 +92,16 @@ public class IdpReportsController {
     ResponseEntity<byte[]> getCostMemberWiseExcel(
             @RequestParam(required = false) String keyword,
             @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable,
-            @PathVariable("viewType") String viewType) {
+            @PathVariable("viewType") String viewType,
+            @RequestParam String reportType) {
         try {
-            byte[] response = idpReportsService.getCostMemberWiseExcel(viewType, keyword, pageable);
+            byte[] response = idpReportsService.getCostMemberWiseExcel(viewType, keyword, pageable, reportType);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            String fileName = "MemberWiseCost_Report_" + reportType.toUpperCase() + ".xlsx";
             headers.setContentDisposition(
-                    ContentDisposition.builder("attachment").filename("TopTrainingTopicsRequested.xlsx").build());
+                    ContentDisposition.builder("attachment").filename(fileName).build());
 
             return ResponseEntity.ok().headers(headers).body(response);
         } catch (HRMSException e) {
@@ -114,10 +117,11 @@ public class IdpReportsController {
 
     @PostMapping("getTrainingCostReportTrainingTopicWise")
     HRMSBaseResponse<?> getCostTrainingWise(@RequestParam(required = false) String keyword,
-                                                               @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
+                                            @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable,
+                                            @RequestParam String reportType) {
         HRMSBaseResponse<?> response;
         try {
-            response = idpReportsService.getCostTrainingWise(keyword, pageable);
+            response = idpReportsService.getCostTrainingWise(keyword, pageable, reportType);
             response.setApplicationVersion(props.getApp_version());
         } catch (HRMSException e) {
             log.error(e.getMessage(), e);
@@ -133,14 +137,16 @@ public class IdpReportsController {
     ResponseEntity<byte[]> getCostTrainingWiseExcel(
             @RequestParam(required = false) String keyword,
             @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable,
-            @PathVariable("viewType") String viewType) {
+            @PathVariable("viewType") String viewType,
+            @RequestParam String reportType) {
         try {
-            byte[] response = idpReportsService.getCostTrainingWiseExcel(viewType, keyword, pageable);
+            byte[] response = idpReportsService.getCostTrainingWiseExcel(viewType, keyword, pageable, reportType);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            String fileName = "TrainingWiseCost_Report_" + reportType.toUpperCase() + ".xlsx";
             headers.setContentDisposition(
-                    ContentDisposition.builder("attachment").filename("TopTrainingTopicsRequested.xlsx").build());
+                    ContentDisposition.builder("attachment").filename(fileName).build());
 
             return ResponseEntity.ok().headers(headers).body(response);
         } catch (HRMSException e) {
