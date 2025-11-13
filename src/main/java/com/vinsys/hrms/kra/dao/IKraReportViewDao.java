@@ -1,4 +1,4 @@
-//package com.vinsys.hrms.kra.dao;
+package com.vinsys.hrms.kra.dao;//package com.vinsys.hrms.kra.dao;
 //
 //import java.util.List;
 //

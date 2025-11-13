@@ -1,4 +1,4 @@
-//package com.vinsys.hrms.kra.vo;
+package com.vinsys.hrms.kra.vo;//package com.vinsys.hrms.kra.vo;
 //
 //import java.io.IOException;
 //import java.util.List;

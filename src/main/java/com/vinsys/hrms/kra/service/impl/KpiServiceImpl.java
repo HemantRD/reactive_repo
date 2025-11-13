@@ -2144,7 +2144,7 @@ public class KpiServiceImpl implements IKpiService {
 
 		Calendar today = Calendar.getInstance();
 
-		java.util.Date utilEndDate = currentRoleCycle.getEndDate();
+		Date utilEndDate = currentRoleCycle.getEndDate();
 		Calendar cycleenddate = Calendar.getInstance();
 		cycleenddate.setTime(utilEndDate);
 

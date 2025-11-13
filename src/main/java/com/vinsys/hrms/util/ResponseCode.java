@@ -16,42 +16,40 @@ import com.vinsys.hrms.entity.MasterResponseCode;
 
 /**
  * @author Onkar A
- *
- * 
  */
 @Component
 public class ResponseCode {
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	@Autowired
-	IHRMSMasterResponseCodeDAO responseCodeDao;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    IHRMSMasterResponseCodeDAO responseCodeDao;
 
-	static HashMap<Integer, String> responseCodeMap = new HashMap<>();
+    static HashMap<Integer, String> responseCodeMap = new HashMap<>();
 
-	@PostConstruct
-	public void init() {
-		log.info("*********************************");
-		log.info("Getting All response code for Org Id {}");
-		log.info("*********************************");
+    @PostConstruct
+    public void init() {
+        log.info("*********************************");
+        log.info("Getting All response code for Org Id {}");
+        log.info("*********************************");
 
-		responseCodeMap = getAllResponseCode();
-		log.info("Completed...");
-	}
+        responseCodeMap = getAllResponseCode();
+        log.info("Completed...");
+    }
 
-	private HashMap<Integer, String> getAllResponseCode() {
-		HashMap<Integer, String> map = new HashMap<>();
-		List<MasterResponseCode> responseCodes = responseCodeDao.findByIsActive(ERecordStatus.Y.name());
-		for (MasterResponseCode responseCode : responseCodes) {
+    private HashMap<Integer, String> getAllResponseCode() {
+        HashMap<Integer, String> map = new HashMap<>();
+        List<MasterResponseCode> responseCodes = responseCodeDao.findByIsActive(ERecordStatus.Y.name());
+        for (MasterResponseCode responseCode : responseCodes) {
 
-			map.put(responseCode.getResponseCode(), responseCode.getResposeMessage());
-		}
-		return map;
-	}
+            map.put(responseCode.getResponseCode(), responseCode.getResposeMessage());
+        }
+        return map;
+    }
 
-	public static HashMap<Integer, String> getResponseCodeMap() {
-		return responseCodeMap;
-	}
+    public static HashMap<Integer, String> getResponseCodeMap() {
+        return responseCodeMap;
+    }
 
-	public static void setResponseCodeMap(HashMap<Integer, String> responseCodeMap) {
-		ResponseCode.responseCodeMap = responseCodeMap;
-	}
+    public static void setResponseCodeMap(HashMap<Integer, String> responseCodeMap) {
+        ResponseCode.responseCodeMap = responseCodeMap;
+    }
 }

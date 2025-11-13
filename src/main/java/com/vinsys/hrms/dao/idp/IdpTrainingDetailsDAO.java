@@ -1,6 +1,6 @@
 package com.vinsys.hrms.dao.idp;
 
-import com.vinsys.hrms.entity.idp.TrainingCatalog;
+import com.vinsys.hrms.idp.entity.IdpDetailEntity;
 import com.vinsys.hrms.idp.reports.vo.MemberWiseCost;
 import com.vinsys.hrms.idp.reports.vo.TopicWiseCost;
 import org.springframework.data.domain.Page;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public interface IdpTrainingDetailsDAO extends JpaRepository<TrainingCatalog, Long> {
+public interface IdpTrainingDetailsDAO extends JpaRepository<IdpDetailEntity, Long> {
 
     @Query("select new com.vinsys.hrms.idp.reports.vo.MemberWiseCost(" +
             " f.officialEmailId, a.topicName, a.trainingCode, b.name, c.name, CAST(1 AS long), a.costPerPersonIndividual)" +

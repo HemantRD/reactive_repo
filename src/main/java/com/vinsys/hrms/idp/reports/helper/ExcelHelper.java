@@ -1,8 +1,12 @@
 package com.vinsys.hrms.idp.reports.helper;
 
 import com.vinsys.hrms.constants.ELogo;
+import com.vinsys.hrms.directonboard.util.IColumnPositionConstants;
+import com.vinsys.hrms.exception.HRMSException;
+import com.vinsys.hrms.idp.progress.util.ExcelFileIndexEnum;
 import com.vinsys.hrms.logo.entity.Logo;
 import com.vinsys.hrms.logo.service.LogoService;
+import com.vinsys.hrms.util.ResponseCode;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -12,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.Date;
 
 public class ExcelHelper {
 
@@ -142,5 +147,32 @@ public class ExcelHelper {
             cell.setCellStyle(headerStyle);
         }
         return sheet;
+    }
+
+    public static int getNumber(Row row, int rowCounter, ExcelFileIndexEnum excelFileIndexEnum) throws HRMSException {
+        try {
+            return (int) row.getCell(excelFileIndexEnum.getIndex()).getNumericCellValue();
+        } catch (Exception e) {
+            throw new HRMSException(1501, ResponseCode.getResponseCodeMap().get(1501) +
+                    excelFileIndexEnum.getName() + " At Row " + rowCounter);
+        }
+    }
+
+    public static String getString(Row row, int rowCounter, ExcelFileIndexEnum excelFileIndexEnum) throws HRMSException {
+        try {
+            return row.getCell(excelFileIndexEnum.getIndex()).getStringCellValue().trim();
+        } catch (Exception e) {
+            throw new HRMSException(1501, ResponseCode.getResponseCodeMap().get(1501) +
+                    excelFileIndexEnum.getName() + " At Row " + rowCounter);
+        }
+    }
+
+    public static Date getDate(Row row, int rowCounter, ExcelFileIndexEnum excelFileIndexEnum) throws HRMSException {
+        try {
+            return row.getCell(excelFileIndexEnum.getIndex()).getDateCellValue();
+        } catch (Exception e) {
+            throw new HRMSException(1501, ResponseCode.getResponseCodeMap().get(1501) +
+                    excelFileIndexEnum.getName() + " At Row " + rowCounter);
+        }
     }
 }

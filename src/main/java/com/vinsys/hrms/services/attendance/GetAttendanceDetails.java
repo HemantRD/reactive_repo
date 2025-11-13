@@ -67,7 +67,7 @@ public class GetAttendanceDetails {
 	IHRMSOrganizationWeekoffDAO organizationWeekoffDAO;
 
 	@RequestMapping(method = { RequestMethod.POST,
-			RequestMethod.PUT }, value = "/getdetails", consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+			RequestMethod.PUT }, value = "/getdetails", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public String empAttendanceReport(@RequestBody VOEmployeeAttendanceReport employeeAttendanceReportParams,
 			HttpServletResponse res) {

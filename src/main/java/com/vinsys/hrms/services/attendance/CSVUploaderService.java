@@ -97,7 +97,7 @@ public class CSVUploaderService {
 	@Qualifier("dataSourceSQLServer")
 	private DataSource dataSourceSQLServer;
 
-	@RequestMapping(value = "/csvuploader/{orgId}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/csvuploader/{orgId}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public String uploadCSV(@RequestParam("file") MultipartFile uploadedInputStream, @PathVariable("orgId") long orgId)
 			throws IOException {
@@ -210,7 +210,7 @@ public class CSVUploaderService {
 		return line.hashCode();
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/processCSVData", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, value = "/processCSVData", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@Transactional
 	// @Scheduled(fixedDelay = 6000, initialDelay = 5000)
@@ -559,7 +559,7 @@ public class CSVUploaderService {
 		return x;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/addMissingData", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, value = "/addMissingData", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	// @Scheduled(fixedDelay = 60000*60*12, initialDelay = 5000)
 	// @Scheduled(cron = "0 0 3 * * *")
@@ -656,7 +656,7 @@ public class CSVUploaderService {
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/updateAttendanceData", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, value = "/updateAttendanceData", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@Scheduled(cron = "0 45 9,10,11,12,13,14,15,16,17,18,19,20 * * *")
 	// @Scheduled(cron = "0 0 2 * * *")

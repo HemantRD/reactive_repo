@@ -105,8 +105,8 @@ public class HRMSDateUtil {
 	 * @param sqldate
 	 * @return java.util.Date
 	 */
-	public static java.util.Date dateFromSqlToUtil(java.sql.Date sqldate) {
-		return (sqldate == null) ? null : new java.util.Date(sqldate.getTime());
+	public static Date dateFromSqlToUtil(java.sql.Date sqldate) {
+		return (sqldate == null) ? null : new Date(sqldate.getTime());
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class HRMSDateUtil {
 	 * @param utildate
 	 * @return
 	 */
-	public static java.sql.Date dateFromUtilToSql(java.util.Date utildate) {
+	public static java.sql.Date dateFromUtilToSql(Date utildate) {
 		return (utildate == null) ? null : new java.sql.Date(utildate.getTime());
 	}
 
