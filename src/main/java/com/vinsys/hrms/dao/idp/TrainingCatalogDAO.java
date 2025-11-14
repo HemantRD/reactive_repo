@@ -40,4 +40,13 @@ public interface TrainingCatalogDAO extends JpaRepository<TrainingCatalog, Long>
 
     boolean existsByTrainingCodeAndIsActive(String trainingCode, String isActive);
 
+    @Query("select count(*) from TrainingCatalog a " +
+            "     inner join IdpDetailEntity b on b.trainingId=a.id" +
+            "     inner join IdpEntity c on c.id=b.idp.id and c.recordStatus='Y'" +
+            "   WHERE a.trainingCode =:trainingCode and c.employeeId=:employeeId")
+    long isTrainingCodeBindToEmployee(String trainingCode, Long employeeId);
+
+    @Query("select id from TrainingCatalog t where t.trainingCode=:trainingCode")
+    Long getIdByTrainingCode(String trainingCode);
+
 }

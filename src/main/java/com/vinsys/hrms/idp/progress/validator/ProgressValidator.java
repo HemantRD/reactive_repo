@@ -42,7 +42,7 @@ public class ProgressValidator {
         this.trainingCatalogDAO = trainingCatalogDAO;
     }
 
-    public List<BulkExcelProgressVo> validateExcelFileData(MultipartFile excelFile) throws HRMSException, Exception {
+    public List<BulkExcelProgressVo> validateExcelFileDataAndGetList(MultipartFile excelFile) throws HRMSException, Exception {
         String fileName = excelFile.getOriginalFilename().toLowerCase();
         if (!fileName.contains(".xlsx") && !fileName.contains(".xlsm")
                 && !fileName.contains(".xls")) {
@@ -84,7 +84,7 @@ public class ProgressValidator {
                 closeSheetAndThrow(workbook, rowCounter, " progressDate (FutureDate)");
             }
             if (trainingCatalogDAO.existsByTrainingCodeAndIsActive(bulkExcelProgressVo.getTrainingCode(), "Y")) {
-                closeSheetAndThrow(workbook, rowCounter, " progressDate (FutureDate)");
+                closeSheetAndThrow(workbook, rowCounter, " trainingCode");
             }
             if (!bulkExcelProgressVo.getProgressUnit().equals("Minutes") &&
                     !bulkExcelProgressVo.getProgressUnit().equals("Hours") &&
@@ -94,6 +94,9 @@ public class ProgressValidator {
             if (!bulkExcelProgressVo.getStatus().equals("InProgress") &&
                     !bulkExcelProgressVo.getStatus().equals("Completed")) {
                 closeSheetAndThrow(workbook, rowCounter, " status (InProgress,Completed)");
+            }
+            if (trainingCatalogDAO.isTrainingCodeBindToEmployee(bulkExcelProgressVo.getTrainingCode(), employee.getId()) == 0) {
+                closeSheetAndThrow(workbook, rowCounter, " trainingCode/MemberEmail mismatch");
             }
         }
         workbook.close();
