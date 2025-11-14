@@ -9,6 +9,7 @@ import lombok.Builder;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "tbl_trn_idp_progress_history")
@@ -39,7 +40,7 @@ public class IdpProgressHistoryEntity extends AuditBase {
     private Long employeeId; // duplicated for quick reference
 
     @Column(name = "log_date")
-    private Instant logDate;
+    private LocalDate logDate;
 
     @Column(name = "progress_value")
     private Integer progressValue;
