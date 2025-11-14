@@ -38,4 +38,6 @@ public interface TrainingCatalogDAO extends JpaRepository<TrainingCatalog, Long>
     Page<TopTrainingCourses> getTopTrainingCourses(@RequestParam("searchParam") String searchParam,
                                                    Pageable pageable);
 
+    boolean existsByTrainingCodeAndIsActive(String trainingCode, String isActive);
+
 }

@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class ExcelHelper {
@@ -167,9 +168,12 @@ public class ExcelHelper {
         }
     }
 
-    public static Date getDate(Row row, int rowCounter, ExcelFileIndexEnum excelFileIndexEnum) throws HRMSException {
+    public static LocalDate getDate(Row row, int rowCounter, ExcelFileIndexEnum excelFileIndexEnum) throws HRMSException {
         try {
-            return row.getCell(excelFileIndexEnum.getIndex()).getDateCellValue();
+            Date utilDate = row.getCell(excelFileIndexEnum.getIndex()).getDateCellValue();
+            return utilDate.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
         } catch (Exception e) {
             throw new HRMSException(1501, ResponseCode.getResponseCodeMap().get(1501) +
                     excelFileIndexEnum.getName() + " At Row " + rowCounter);

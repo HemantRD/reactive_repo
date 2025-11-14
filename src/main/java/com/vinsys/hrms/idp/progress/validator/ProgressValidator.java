@@ -21,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -31,11 +32,14 @@ public class ProgressValidator {
 
     private final IHRMSEmployeeDAO employeeDAO;
     private final IdpEntityDAO idpEntityDAO;
+    private final TrainingCatalogDAO trainingCatalogDAO;
 
 
-    public ProgressValidator(final IHRMSEmployeeDAO employeeDAO, final IdpEntityDAO idpEntityDAO) {
+    public ProgressValidator(final IHRMSEmployeeDAO employeeDAO, final IdpEntityDAO idpEntityDAO,
+                             final TrainingCatalogDAO trainingCatalogDAO) {
         this.employeeDAO = employeeDAO;
         this.idpEntityDAO = idpEntityDAO;
+        this.trainingCatalogDAO = trainingCatalogDAO;
     }
 
     public List<BulkExcelProgressVo> validateExcelFileData(MultipartFile excelFile) throws HRMSException, Exception {
@@ -68,10 +72,28 @@ public class ProgressValidator {
             bulkExcelProgressVoList.add(bulkExcelProgressVo);
             Employee employee = employeeDAO.findByofficialEmailId(bulkExcelProgressVo.getMemberEmail());
             if (employee == null) {
-                closeSheetAndThrow(workbook, rowCounter, "MemberEmail");
+                closeSheetAndThrow(workbook, rowCounter, " MemberEmail");
             }
             if (!idpEntityDAO.existsByEmployeeIdAndRecordStatus(employee.getId(), "Y")) {
-                closeSheetAndThrow(workbook, rowCounter, "MemberEmail");
+                closeSheetAndThrow(workbook, rowCounter, " MemberEmail");
+            }
+            if (bulkExcelProgressVo.getProgressValue() <= 0) {
+                closeSheetAndThrow(workbook, rowCounter, " progressValue");
+            }
+            if (bulkExcelProgressVo.getProgressDate().isAfter(LocalDate.now())) {
+                closeSheetAndThrow(workbook, rowCounter, " progressDate (FutureDate)");
+            }
+            if (trainingCatalogDAO.existsByTrainingCodeAndIsActive(bulkExcelProgressVo.getTrainingCode(), "Y")) {
+                closeSheetAndThrow(workbook, rowCounter, " progressDate (FutureDate)");
+            }
+            if (!bulkExcelProgressVo.getProgressUnit().equals("Minutes") &&
+                    !bulkExcelProgressVo.getProgressUnit().equals("Hours") &&
+                    !bulkExcelProgressVo.getProgressUnit().equals("Days")) {
+                closeSheetAndThrow(workbook, rowCounter, " progressUnit (Minutes,Hours,Days)");
+            }
+            if (!bulkExcelProgressVo.getStatus().equals("InProgress") &&
+                    !bulkExcelProgressVo.getStatus().equals("Completed")) {
+                closeSheetAndThrow(workbook, rowCounter, " status (InProgress,Completed)");
             }
         }
         workbook.close();

@@ -11,7 +11,6 @@ public enum ExcelFileIndexEnum {
 
     int index;
     String name;
-    String type;
 
     ExcelFileIndexEnum(Integer index, String name) {
         this.index = index;
@@ -24,9 +23,5 @@ public enum ExcelFileIndexEnum {
 
     public String getName() {
         return name;
-    }
-
-    public String getType() {
-        return type;
     }
 }
