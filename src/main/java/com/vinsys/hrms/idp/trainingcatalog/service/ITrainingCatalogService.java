@@ -3,6 +3,8 @@ package com.vinsys.hrms.idp.trainingcatalog.service;
 import com.vinsys.hrms.datamodel.HRMSBaseResponse;
 import com.vinsys.hrms.exception.HRMSException;
 import com.vinsys.hrms.idp.trainingcatalog.vo.CompetencyDDLVo;
+import com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicReq;
+import com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicsVo;
 import com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +22,5 @@ public interface ITrainingCatalogService {
 
     HRMSBaseResponse<List<CompetencyDDLVo>> getCompetencySubTypes(Integer id);
 
+    HRMSBaseResponse<List<SearchTopicsVo>> searchTopics(SearchTopicReq request, String keyword, Pageable pageable) throws HRMSException;
 }

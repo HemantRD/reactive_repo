@@ -2,12 +2,15 @@ package com.vinsys.hrms.dao.idp;
 
 import com.vinsys.hrms.entity.idp.TrainingCatalog;
 import com.vinsys.hrms.idp.reports.vo.TopTrainingCourses;
+import com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicsVo;
 import com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 public interface TrainingCatalogDAO extends JpaRepository<TrainingCatalog, Long> {
 
@@ -48,5 +51,18 @@ public interface TrainingCatalogDAO extends JpaRepository<TrainingCatalog, Long>
 
     @Query("select id from TrainingCatalog t where t.trainingCode=:trainingCode")
     Long getIdByTrainingCode(String trainingCode);
+
+    @Query("select new com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicsVo(" +
+            " a.topicName, a.trainingCode, b.name, c.name, count(*) cnt)" +
+            " from TrainingCatalog a" +
+            "     inner join TrainingCatalogKeywords b on b.trainingId=a.id" +
+            "     inner join CompetencyTypes c on c.id=a.competencyTypeId" +
+            "     inner join CompetencySubTypes d on d.id=a.competencySubTypeId" +
+            " where a.isActive='Y' and b.keyword in (:keywords) and " +
+            "  (:searchParam is null or :searchParam = '' or a.topicName LIKE CONCAT('%', :searchParam, '%'))" +
+            "  group by a.topicName, a.trainingCode, b.name, c.name")
+    Page<SearchTopicsVo> getSearchTrainingTopics(@RequestParam("searchParam") String searchParam,
+                                                 Pageable pageable, List<String> keywords);
+
 
 }

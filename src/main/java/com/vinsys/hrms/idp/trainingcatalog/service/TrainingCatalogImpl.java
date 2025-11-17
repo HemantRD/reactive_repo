@@ -10,16 +10,21 @@ import com.vinsys.hrms.entity.idp.TrainingCatalogKeywords;
 import com.vinsys.hrms.exception.HRMSException;
 import com.vinsys.hrms.idp.trainingcatalog.validator.TrainingCatalogValidator;
 import com.vinsys.hrms.idp.trainingcatalog.vo.CompetencyDDLVo;
+import com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicReq;
+import com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicsVo;
 import com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo;
 import com.vinsys.hrms.security.SecurityFilter;
 import com.vinsys.hrms.spring.BackendProperties;
 import com.vinsys.hrms.util.ResponseCode;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -92,6 +97,23 @@ public class TrainingCatalogImpl implements ITrainingCatalogService {
         response.setResponseBody(competencySubTypesDAO.getCompetencyTypes(id));
         response.setResponseCode(1200);
         response.setApplicationVersion(props.getApp_version());
+        return response;
+    }
+
+    @Override
+    public HRMSBaseResponse<List<SearchTopicsVo>> searchTopics(SearchTopicReq request, String keyword, Pageable pageable) throws HRMSException {
+        validator.searchTopics(request);
+        String[] tokens = request.getLine().split(" ");
+        Pageable pageableQuery = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                Sort.by("cnt").descending());
+        Page<SearchTopicsVo> trainingCatalogList = trainingCatalogDAO.getSearchTrainingTopics(keyword,
+                pageableQuery, Arrays.asList(tokens));
+        HRMSBaseResponse<List<SearchTopicsVo>> response = new HRMSBaseResponse<>();
+        response.setResponseBody(trainingCatalogList.getContent());
+        response.setResponseCode(1200);
+        response.setResponseMessage(ResponseCode.getResponseCodeMap().get(1200));
+        response.setApplicationVersion(props.getApp_version());
+        response.setTotalRecord(trainingCatalogList.getTotalElements());
         return response;
     }
 

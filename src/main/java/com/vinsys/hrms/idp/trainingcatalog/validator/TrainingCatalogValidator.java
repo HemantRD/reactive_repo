@@ -2,8 +2,8 @@ package com.vinsys.hrms.idp.trainingcatalog.validator;
 
 import com.vinsys.hrms.dao.idp.TrainingCatalogDAO;
 import com.vinsys.hrms.exception.HRMSException;
+import com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicReq;
 import com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo;
-import com.vinsys.hrms.spring.BackendProperties;
 import com.vinsys.hrms.util.HRMSHelper;
 import com.vinsys.hrms.util.ResponseCode;
 import org.springframework.stereotype.Component;
@@ -73,6 +73,12 @@ public class TrainingCatalogValidator {
     public void validateGetById(Long id) throws HRMSException {
         if (!trainingCatalogDAO.existsById(id)) {
             throw new HRMSException(1501, "Not Found");
+        }
+    }
+
+    public void searchTopics(SearchTopicReq request) throws HRMSException {
+        if (HRMSHelper.isNullOrEmpty(request.getLine())) {
+            throw new HRMSException(1501, ResponseCode.getResponseCodeMap().get(1501) + " criteria");
         }
     }
 }

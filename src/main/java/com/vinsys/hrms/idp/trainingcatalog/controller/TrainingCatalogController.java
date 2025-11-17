@@ -3,6 +3,7 @@ package com.vinsys.hrms.idp.trainingcatalog.controller;
 import com.vinsys.hrms.datamodel.HRMSBaseResponse;
 import com.vinsys.hrms.exception.HRMSException;
 import com.vinsys.hrms.idp.helper.ResponseGenerator;
+import com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicReq;
 import com.vinsys.hrms.idp.trainingcatalog.service.ITrainingCatalogService;
 import com.vinsys.hrms.idp.trainingcatalog.vo.CompetencyDDLVo;
 import com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo;
@@ -91,5 +92,24 @@ public class TrainingCatalogController {
         response.setApplicationVersion(props.getApp_version());
         return response;
     }
+
+    @PostMapping(value = "searchTopics")
+    HRMSBaseResponse<?> searchTopics(@RequestBody SearchTopicReq request,
+                                     @RequestParam(required = false) String keyword,
+                                     @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
+        HRMSBaseResponse<?> response;
+        try {
+            response = trainingCatalogService.searchTopics(request, keyword, pageable);
+            response.setApplicationVersion(props.getApp_version());
+        } catch (HRMSException e) {
+            log.error(e.getMessage(), e);
+            response = ResponseGenerator.getValidationResponse(e, props.getApp_version());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            response = ResponseGenerator.getErrorResponse(e, props.getApp_version());
+        }
+        return response;
+    }
+
 
 }
