@@ -26,6 +26,12 @@ public class TrainingBudget extends AuditBase {
     @Column(name = "budget_amount", nullable = false)
     private Double budgetAmount;
 
+    @Column(name = " TBD", nullable = false)
+    private Double T BD;
+
+    @Column(name = "T BD", nullable = false)
+    private Double TB D;
+
     @Column(name = "currency_symbol")
     private String currencySymbol;
 

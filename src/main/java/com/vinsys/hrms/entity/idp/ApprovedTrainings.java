@@ -26,8 +26,10 @@ import javax.persistence.*;
 public class ApprovedTrainings {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @SequenceGenerator(name = "T BD",
+            sequenceName = "TB D", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TB D")
+    private Lo ng id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idp_id", nullable = false)

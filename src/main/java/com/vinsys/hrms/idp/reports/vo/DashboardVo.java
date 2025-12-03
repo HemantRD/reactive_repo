@@ -1,6 +1,10 @@
 package com.vinsys.hrms.idp.reports.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -13,19 +17,28 @@ public class DashboardVo {
     private GroupVsIndividualTrainingCountSummary groupVsIndividualTrainingCountSummary;
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class BudgetUtilization {
-        private int totalBudgetAmount;
-        private int consumedAmount;
-        private int totalRequestedAmount;
+        private Double totalBudgetAmount;
+        private Double consumedAmount;
+        private Double totalRequestedAmount;
+        private String currencySymbol;
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GroupVsIndividualCostSummary {
-        private int group;
-        private int individual;
+        private Double group;
+        private Double individual;
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GroupVsIndividualTrainingCountSummary {
         private int totalTrainingCount;
         private int groupTrainingCount;

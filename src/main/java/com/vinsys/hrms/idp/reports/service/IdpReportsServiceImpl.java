@@ -1,6 +1,8 @@
 package com.vinsys.hrms.idp.reports.service;
 
+import com.vinsys.hrms.dao.idp.ApprovedTrainingsDAO;
 import com.vinsys.hrms.dao.idp.IdpTrainingDetailsDAO;
+import com.vinsys.hrms.dao.idp.TrainingBudgetDAO;
 import com.vinsys.hrms.dao.idp.TrainingCatalogDAO;
 import com.vinsys.hrms.datamodel.HRMSBaseResponse;
 import com.vinsys.hrms.exception.HRMSException;
@@ -8,6 +10,7 @@ import com.vinsys.hrms.idp.reports.helper.ExcelHelper;
 import com.vinsys.hrms.idp.reports.validator.IdpReportsValidator;
 import com.vinsys.hrms.idp.reports.vo.*;
 import com.vinsys.hrms.logo.service.LogoService;
+import com.vinsys.hrms.master.dao.IMasterYearDAO;
 import com.vinsys.hrms.spring.BackendProperties;
 import com.vinsys.hrms.util.HRMSHelper;
 import com.vinsys.hrms.util.ResponseCode;
@@ -31,16 +34,23 @@ public class IdpReportsServiceImpl implements IIdpReportsService {
     private final LogoService logoService;
     private final TrainingCatalogDAO trainingCatalogDAO;
     private final IdpTrainingDetailsDAO idpTrainingDetailsDAO;
+    private final TrainingBudgetDAO trainingBudgetDAO;
+    private final ApprovedTrainingsDAO approvedTrainingsDAO;
+    private final IMasterYearDAO iMasterYearDAO;
 
 
     public IdpReportsServiceImpl(final BackendProperties props, final IdpReportsValidator validator,
                                  final LogoService logoService, final TrainingCatalogDAO trainingCatalogDAO,
-                                 final IdpTrainingDetailsDAO idpTrainingDetailsDAO) {
+                                 final IdpTrainingDetailsDAO idpTrainingDetailsDAO, final TrainingBudgetDAO trainingBudgetDAO,
+                                 final ApprovedTrainingsDAO approvedTrainingsDAO, final IMasterYearDAO iMasterYearDAO) {
         this.props = props;
         this.validator = validator;
         this.logoService = logoService;
         this.trainingCatalogDAO = trainingCatalogDAO;
         this.idpTrainingDetailsDAO = idpTrainingDetailsDAO;
+        this.trainingBudgetDAO = trainingBudgetDAO;
+        this.approvedTrainingsDAO = approvedTrainingsDAO;
+        this.iMasterYearDAO = iMasterYearDAO;
     }
 
     public HRMSBaseResponse<List<TopTrainingCourses>> getTopTrainingRequested(String keyword, Pageable pageable) throws HRMSException {
@@ -197,12 +207,40 @@ public class IdpReportsServiceImpl implements IIdpReportsService {
 
     @Override
     public HRMSBaseResponse<DashboardVo> getDashboard(String keyword, Pageable pageable) throws HRMSException {
-        return null;
+        DashboardVo responseVo = new DashboardVo();
+
+        Page<TopTrainingCourses> topTrainingCourses = getTopTrainingCourses(keyword, pageable);
+
+        Long yearId = iMasterYearDAO.getYearIdRunningYear();
+        responseVo.setGroupVsIndividualCostSummary(approvedTrainingsDAO.groupIndividualCostSummary(yearId));
+
+        responseVo.setBudgetUtilization(trainingBudgetDAO.getBudgetUtilization(yearId));
+        responseVo.setCurrencySymbol(responseVo.getBudgetUtilization().getCurrencySymbol());
+        responseVo.getBudgetUtilization().setCurrencySymbol(null);
+
+        var trainingCountSummary = new DashboardVo.GroupVsIndividualTrainingCountSummary();
+        trainingCountSummary.setTotalTrainingCount(approvedTrainingsDAO.getTotalTraining(yearId));
+        trainingCountSummary.setGroupTrainingCount(approvedTrainingsDAO.getTotalGroupTraining(yearId));
+        trainingCountSummary.setIndividualTrainingCount(approvedTrainingsDAO.getTotalIndividualTraining(yearId));
+        responseVo.setGroupVsIndividualTrainingCountSummary(trainingCountSummary);
+
+        HRMSBaseResponse<DashboardVo> response = new HRMSBaseResponse<>();
+        response.setResponseBody(responseVo);
+        response.setResponseCode(1200);
+        response.setTotalRecord(topTrainingCourses.getTotalElements());
+        response.setApplicationVersion(props.getApp_version());
+        return response;
     }
 
     @Override
     public HRMSBaseResponse<List<ParticipantsClustersVo>> getParticipantsClusters(String keyword, Pageable pageable) throws HRMSException {
-        return null;
+        HRMSBaseResponse<List<ParticipantsClustersVo>> response = new HRMSBaseResponse<>();
+        Page<ParticipantsClustersVo> participantClusters = approvedTrainingsDAO.getParticipantClusters(keyword, pageable);
+        response.setResponseBody(participantClusters.getContent());
+        response.setResponseCode(1200);
+        response.setTotalRecord(participantClusters.getTotalElements());
+        response.setApplicationVersion(props.getApp_version());
+        return response;
     }
 
     private Page<TopTrainingCourses> getTopTrainingCourses(String keyword, Pageable pageable) {

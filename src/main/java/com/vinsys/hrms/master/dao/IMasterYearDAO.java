@@ -14,7 +14,10 @@ public interface IMasterYearDAO extends JpaRepository<YearMaster, Long> {
 	@Query("select y from YearMaster y where y.status='Open'")
 	YearMaster findRunningYear();
 
-	
+	@Query("select y.id from YearMaster y where y.status='Open'")
+	Long getYearIdRunningYear();
+
+
 	@Query(value = "SELECT * FROM tbl_mst_year WHERE year <= ?1 ORDER BY id DESC LIMIT 11", nativeQuery = true)
 	List<YearMaster> getLastTenYears(Long year);
 
