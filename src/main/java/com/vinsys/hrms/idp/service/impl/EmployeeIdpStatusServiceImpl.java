@@ -12,23 +12,29 @@ import com.vinsys.hrms.idp.entity.IdpOrganizationEmployeeView;
 import com.vinsys.hrms.idp.entity.MapEmployeeIdpStatus;
 import com.vinsys.hrms.idp.entity.MapEmployeeIdpStatusHistory;
 import com.vinsys.hrms.idp.helper.EmployeeIdpStatusHelper;
+import com.vinsys.hrms.idp.reports.helper.ExcelHelper;
 import com.vinsys.hrms.idp.service.IEmployeeIdpStatusService;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusFullResponseVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusRequestVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusResponseVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusVO;
+import com.vinsys.hrms.idp.vo.employeeidpstatus.*;
+import com.vinsys.hrms.logo.service.LogoService;
 import com.vinsys.hrms.security.SecurityFilter;
 import com.vinsys.hrms.util.HRMSDateUtil;
 import com.vinsys.hrms.util.HRMSHelper;
 import com.vinsys.hrms.util.IHRMSConstants;
+import com.vinsys.hrms.util.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +64,13 @@ public class EmployeeIdpStatusServiceImpl implements IEmployeeIdpStatusService {
 
     @Value("${app_version}")
     private String applicationVersion;
+
+    private final LogoService logoService;
+
+
+    public EmployeeIdpStatusServiceImpl(final LogoService logoService) {
+        this.logoService = logoService;
+    }
 
     // ==========================================================
     // CREATE
@@ -155,8 +168,8 @@ public class EmployeeIdpStatusServiceImpl implements IEmployeeIdpStatusService {
     }
 
     @Override
-    public HRMSBaseResponse<List<EmployeeIdpStatusVO>> getOrganizationEmployeesForIdp(Long branchId, String branch,
-                                                                                String keyword, Long gradeId, Long deptId, Pageable pageable) throws HRMSException {
+    public HRMSBaseResponse<List<EmployeeIdpStatusVO>> getOrganizationEmployeesForIdp(EmpStatusListingReq request,
+                                                                                      Pageable pageable) throws HRMSException {
 
         log.info("Inside getOrganizationEmployeesForIdp method");
         HRMSBaseResponse<List<EmployeeIdpStatusVO>> response = new HRMSBaseResponse<>();
@@ -165,51 +178,22 @@ public class EmployeeIdpStatusServiceImpl implements IEmployeeIdpStatusService {
         if (HRMSHelper.isLongZero(empId)) {
             throw new HRMSException(EResponse.INAVALID_DATA.getCode(), EResponse.INAVALID_DATA.getMessage());
         }
-        // Fetch employees from view with pagination
-        Page<IdpOrganizationEmployeeView> employeePage;
 
-        if (!HRMSHelper.isNullOrEmpty(branchId)) {
-            employeePage = idpOrganizationEmployeeViewDAO.findByBranchId(branchId, pageable);
-        } else if (!HRMSHelper.isNullOrEmpty(branch)) {
-            employeePage = idpOrganizationEmployeeViewDAO.findByBranchName(branch, pageable);
-        } else if (!HRMSHelper.isNullOrEmpty(keyword)) {
-            String keywordU = keyword.replaceAll(" ", "%");
-            employeePage = idpOrganizationEmployeeViewDAO.findByKeyword(keywordU, pageable);
-        } else if (!HRMSHelper.isNullOrEmpty(gradeId)) {
-            employeePage = idpOrganizationEmployeeViewDAO.findByGradeId(gradeId, pageable);
-        } else if (!HRMSHelper.isNullOrEmpty(deptId)) {
-            employeePage = idpOrganizationEmployeeViewDAO.findByDepartmentId(deptId, pageable);
-        } else {
-            employeePage = idpOrganizationEmployeeViewDAO.findAll(pageable);
-        }
+        Pageable pageableSortBy = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by("empFirstName", "employeeCode").ascending());
+
+        // Fetch employees from view with pagination
+        String keyword = request.getKeyword() == null ? null : request.getKeyword().toLowerCase();
+        Page<IdpOrganizationEmployeeView> employeePage =
+                idpOrganizationEmployeeViewDAO.findOrgEmployeesByPage(keyword, request.getBranchId(),
+                        request.getBranch(), request.getDeptId(), request.getGradeId(), request.getIdpSubmissionStatus(),
+                        pageableSortBy);
 
         // Convert view entities to VO
         List<EmployeeIdpStatusVO> employeeIdpStatusVOList = new ArrayList<>();
 
         for (IdpOrganizationEmployeeView viewEntity : employeePage.getContent()) {
-            EmployeeIdpStatusVO vo = new EmployeeIdpStatusVO();
-            vo.setId(viewEntity.getEmployeeId());
-            vo.setOfficialEmailId(viewEntity.getOfficialEmailId());
-            vo.setFirstName(viewEntity.getEmpFirstName());
-            vo.setLastName(viewEntity.getEmpLastName());
-            vo.setMiddleName(viewEntity.getEmpMiddleName());
-            vo.setBranch(viewEntity.getBranchName());
-            vo.setBranchId(viewEntity.getBranchId());
-            vo.setDepartment(viewEntity.getDepartmentName());
-            vo.setDepartmentId(viewEntity.getDepartmentId());
-            vo.setDivision(viewEntity.getDivisionName());
-            vo.setDivisionId(viewEntity.getDivisionId());
-            vo.setDesignation(viewEntity.getDesignationName());
-            vo.setContactNo(viewEntity.getContactNo() != null ? viewEntity.getContactNo() : 0L);
-            vo.setOfficialContactNo(viewEntity.getOfficialMobileNumber());
-            vo.setDateOfBirth(HRMSDateUtil.format(viewEntity.getDateOfBirth(), IHRMSConstants.FRONT_END_DATE_FORMAT));
-            vo.setEmployeeCode(viewEntity.getEmployeeCode());
-            vo.setName(viewEntity.getFullEmployeeName());
-            vo.setReportingManager(viewEntity.getReportingManagerName());
-            vo.setGrade(viewEntity.getGrade());
-            vo.setIdpStatus(viewEntity.getIdpSubmissionStatus());
-
-            employeeIdpStatusVOList.add(vo);
+            employeeIdpStatusVOList.add(populateEmployeeIdpStatusVO(viewEntity));
         }
 
         if (HRMSHelper.isNullOrEmpty(employeeIdpStatusVOList)) {
@@ -225,5 +209,105 @@ public class EmployeeIdpStatusServiceImpl implements IEmployeeIdpStatusService {
         log.info("Exit getOrganizationEmployeesForIdp method");
 
         return response;
+    }
+
+    @Override
+    public byte[] getOrganizationEmployeesForIdpExcel(EmpStatusListingReq request, Pageable pageable) throws HRMSException {
+
+        log.info("Inside getOrganizationEmployeesForIdp method");
+        HRMSBaseResponse<List<EmployeeIdpStatusVO>> response = new HRMSBaseResponse<>();
+
+        Long empId = SecurityFilter.TL_CLAIMS.get().getEmployeeId();
+        if (HRMSHelper.isLongZero(empId)) {
+            throw new HRMSException(EResponse.INAVALID_DATA.getCode(), EResponse.INAVALID_DATA.getMessage());
+        }
+
+        Sort sort = Sort.by("empFirstName", "employeeCode").ascending();
+        String keyword = request.getKeyword() == null ? null : request.getKeyword().toLowerCase();
+        List<IdpOrganizationEmployeeView> employeePage =
+                idpOrganizationEmployeeViewDAO.findOrgEmployeesExcel(keyword, request.getBranchId(),
+                        request.getBranch(), request.getDeptId(), request.getGradeId(), request.getIdpSubmissionStatus(),
+                        sort);
+
+        List<EmployeeIdpStatusVO> employeeIdpStatusVOList = new ArrayList<>();
+        for (IdpOrganizationEmployeeView viewEntity : employeePage) {
+            employeeIdpStatusVOList.add(populateEmployeeIdpStatusVO(viewEntity));
+        }
+
+        if (HRMSHelper.isNullOrEmpty(employeeIdpStatusVOList)) {
+            throw new HRMSException(1500, ResponseCode.getResponseCodeMap().get(1201));
+        }
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            String[] headers = {"id", "officialEmailId", "firstName",
+                    "middleName", "lastName", "department", "branch",
+                    "division", "dateOfBirth", "contactNo", "officialContactNo",
+                    "employeeCode", "name", "designation", "ReportingManager", "Grade",
+                    "branchId", "departmentId", "divisionId", "idpStatus"};
+            String title = "EmployeeCorderReport";
+            Sheet sheet = ExcelHelper.createInitialSheet(workbook, title, headers, logoService);
+            CellStyle borderStyle = workbook.createCellStyle();
+            borderStyle.setBorderTop(BorderStyle.MEDIUM);
+            borderStyle.setBorderBottom(BorderStyle.MEDIUM);
+            borderStyle.setBorderLeft(BorderStyle.MEDIUM);
+            borderStyle.setBorderRight(BorderStyle.MEDIUM);
+
+            int rowNum = 4 + 1;
+            for (EmployeeIdpStatusVO data : employeeIdpStatusVOList) {
+                Row row = sheet.createRow(rowNum++);
+                ExcelHelper.createCell(row, 0, data.getId(), borderStyle);
+                ExcelHelper.createCell(row, 1, data.getOfficialEmailId(), borderStyle);
+                ExcelHelper.createCell(row, 2, data.getFirstName(), borderStyle);
+                ExcelHelper.createCell(row, 3, data.getMiddleName(), borderStyle);
+                ExcelHelper.createCell(row, 4, data.getLastName(), borderStyle);
+                ExcelHelper.createCell(row, 5, data.getDepartment(), borderStyle);
+                ExcelHelper.createCell(row, 6, data.getBranch(), borderStyle);
+                ExcelHelper.createCell(row, 7, data.getDivision(), borderStyle);
+                ExcelHelper.createCell(row, 8, data.getDateOfBirth(), borderStyle);
+                ExcelHelper.createCell(row, 9, data.getContactNo(), borderStyle);
+                ExcelHelper.createCell(row, 10, data.getOfficialContactNo(), borderStyle);
+                ExcelHelper.createCell(row, 11, data.getEmployeeCode(), borderStyle);
+                ExcelHelper.createCell(row, 12, data.getName(), borderStyle);
+                ExcelHelper.createCell(row, 13, data.getDesignation(), borderStyle);
+                ExcelHelper.createCell(row, 14, data.getReportingManager(), borderStyle);
+                ExcelHelper.createCell(row, 15, data.getGrade(), borderStyle);
+                ExcelHelper.createCell(row, 16, data.getBranchId(), borderStyle);
+                ExcelHelper.createCell(row, 17, data.getDepartmentId(), borderStyle);
+                ExcelHelper.createCell(row, 18, data.getDivisionId(), borderStyle);
+                ExcelHelper.createCell(row, 19, data.getIdpStatus(), borderStyle);
+            }
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            workbook.write(out);
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new HRMSException(1500, ResponseCode.getResponseCodeMap().get(1783));
+        }
+    }
+
+    private EmployeeIdpStatusVO populateEmployeeIdpStatusVO(IdpOrganizationEmployeeView viewEntity) {
+        EmployeeIdpStatusVO vo = new EmployeeIdpStatusVO();
+        vo.setId(viewEntity.getEmployeeId());
+        vo.setOfficialEmailId(viewEntity.getOfficialEmailId());
+        vo.setFirstName(viewEntity.getEmpFirstName());
+        vo.setLastName(viewEntity.getEmpLastName());
+        vo.setMiddleName(viewEntity.getEmpMiddleName());
+        vo.setBranch(viewEntity.getBranchName());
+        vo.setBranchId(viewEntity.getBranchId());
+        vo.setDepartment(viewEntity.getDepartmentName());
+        vo.setDepartmentId(viewEntity.getDepartmentId());
+        vo.setDivision(viewEntity.getDivisionName());
+        vo.setDivisionId(viewEntity.getDivisionId());
+        vo.setDesignation(viewEntity.getDesignationName());
+        vo.setContactNo(viewEntity.getContactNo() != null ? viewEntity.getContactNo() : 0L);
+        vo.setOfficialContactNo(viewEntity.getOfficialMobileNumber());
+        vo.setDateOfBirth(HRMSDateUtil.format(viewEntity.getDateOfBirth(), IHRMSConstants.FRONT_END_DATE_FORMAT));
+        vo.setEmployeeCode(viewEntity.getEmployeeCode());
+        vo.setName(viewEntity.getFullEmployeeName());
+        vo.setReportingManager(viewEntity.getReportingManagerName());
+        vo.setGrade(viewEntity.getGrade());
+        vo.setIdpStatus(viewEntity.getIdpSubmissionStatus());
+        return vo;
     }
 }

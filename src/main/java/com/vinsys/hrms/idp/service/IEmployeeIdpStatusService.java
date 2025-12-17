@@ -2,10 +2,7 @@ package com.vinsys.hrms.idp.service;
 
 import com.vinsys.hrms.datamodel.HRMSBaseResponse;
 import com.vinsys.hrms.exception.HRMSException;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusFullResponseVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusRequestVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusResponseVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusVO;
+import com.vinsys.hrms.idp.vo.employeeidpstatus.*;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -43,5 +40,7 @@ public interface IEmployeeIdpStatusService {
      */
     List<EmployeeIdpStatusFullResponseVO> getAllIdpStatuses();
 
-    HRMSBaseResponse<List<EmployeeIdpStatusVO>> getOrganizationEmployeesForIdp(Long branchId, String branch, String keyword, Long gradeId, Long deptId, Pageable pageable) throws HRMSException;
+    HRMSBaseResponse<List<EmployeeIdpStatusVO>> getOrganizationEmployeesForIdp(EmpStatusListingReq request, Pageable pageable) throws HRMSException;
+
+    byte[] getOrganizationEmployeesForIdpExcel(EmpStatusListingReq request, Pageable pageable) throws HRMSException;
 }

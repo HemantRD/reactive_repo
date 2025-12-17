@@ -4,10 +4,7 @@ import com.vinsys.hrms.datamodel.HRMSBaseResponse;
 import com.vinsys.hrms.exception.HRMSException;
 import com.vinsys.hrms.idp.service.IEmployeeIdpStatusService;
 import com.vinsys.hrms.idp.service.IIdpService;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusFullResponseVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusResponseVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusVO;
-import com.vinsys.hrms.idp.vo.employeeidpstatus.EmployeeIdpStatusWrapperVO;
+import com.vinsys.hrms.idp.vo.employeeidpstatus.*;
 import com.vinsys.hrms.idp.vo.getidp.IdpListResponseVO;
 import com.vinsys.hrms.idp.vo.getidp.IdpVO;
 import com.vinsys.hrms.idp.vo.getidp.IdpWrapperRequestVO;
@@ -22,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -233,20 +231,43 @@ public class IdpController {
 
     @Operation(summary = "API for All Organzation Employee Details", description = "This API used to all employee deatils shows on Organzation details tab like empid,Name,Offical mail,location..,etc.")
     @GetMapping("/employee-status/getOrganizationEmployeesForIdp")
-    HRMSBaseResponse<List<EmployeeIdpStatusVO>> getOrganizationEmployeesForIdp(@RequestParam(required = false) Long branchId,
-                                                                               @RequestParam(required = false) String branch, @RequestParam(required = false) String keyword, @RequestParam(required = false) Long gradeId, @RequestParam(required = false) Long deptId,
-                                                                               @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
+    HRMSBaseResponse<List<EmployeeIdpStatusVO>> getOrganizationEmployeesForIdp(
+            @RequestBody EmpStatusListingReq request,
+            @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
         HRMSBaseResponse<List<EmployeeIdpStatusVO>> response = new HRMSBaseResponse<>();
         try {
-
-            response = employeeIdpStatusService.getOrganizationEmployeesForIdp(branchId, branch, keyword, gradeId, deptId,
-                    pageable);
+            response = employeeIdpStatusService.getOrganizationEmployeesForIdp(request, pageable);
         } catch (HRMSException e) {
             log.error(e.getMessage(), e);
-
             response.setResponseCode(e.getResponseCode());
             response.setResponseMessage(e.getResponseMessage());
         }
         return response;
+    }
+
+    @Operation(summary = "API for All Organzation Employee Details", description = "This API used to all employee deatils shows on Organzation details tab like empid,Name,Offical mail,location..,etc.")
+    @GetMapping("/employee-status/getOrganizationEmployeesForIdp/download")
+    ResponseEntity<byte[]> getOrganizationEmployeesForIdpExcel(
+            @RequestBody EmpStatusListingReq request,
+            @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
+        try {
+            byte[] response = employeeIdpStatusService.getOrganizationEmployeesForIdpExcel(request, pageable);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            String fileName = "TrainingCatalogList_Report.xlsx";
+            headers.setContentDisposition(
+                    ContentDisposition.builder("attachment").filename(fileName).build());
+
+            return ResponseEntity.ok().headers(headers).body(response);
+        } catch (HRMSException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(("Error: " + e.getResponseMessage()).getBytes());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseCode.getResponseCodeMap().get(1500).getBytes());
+        }
     }
 }

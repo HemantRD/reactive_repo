@@ -137,20 +137,4 @@ public class TrainingCatalogHelper {
         return budget;
     }
 
-    public Page<TrainingCatalogVo> getTrainingList(TrainingCatalogListingReq request,
-                                                   Pageable pageable) {
-        Pageable pageableSortBy;
-        if (request.getSortType().equals("asc"))
-            pageableSortBy = PageRequest.of(pageable.getPageNumber(),
-                    pageable.getPageSize(), Sort.by(request.getSortBy()).ascending());
-        else
-            pageableSortBy = PageRequest.of(pageable.getPageNumber(),
-                    pageable.getPageSize(), Sort.by(request.getSortBy()).descending());
-        String keywords = request.getKeyword() == null ? null : request.getKeyword().toLowerCase();
-        Page<TrainingCatalogVo> trainingCatalogList =
-                trainingCatalogDAO.findTrainingCatalogsByPage(keywords, request.getIsInternal(),
-                        request.getIsCertificationCourse(), request.getStatus() ? "Y" : "N", pageableSortBy);
-        return trainingCatalogList;
-    }
-
 }

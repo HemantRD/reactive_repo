@@ -20,7 +20,9 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,14 +91,33 @@ public class TrainingCatalogImpl implements ITrainingCatalogService {
     public HRMSBaseResponse<List<TrainingCatalogVo>> getAllTrainingCatalogs(TrainingCatalogListingReq request,
                                                                             Pageable pageable) throws HRMSException {
         validator.getAllTrainingCatalogs(request);
-        Page<TrainingCatalogVo> trainingCatalogList = helper.getTrainingList(request, pageable);
+        Pageable pageableSortBy;
+        if (request.getSortType().equals("asc"))
+            pageableSortBy = PageRequest.of(pageable.getPageNumber(),
+                    pageable.getPageSize(), Sort.by(request.getSortBy()).ascending());
+        else
+            pageableSortBy = PageRequest.of(pageable.getPageNumber(),
+                    pageable.getPageSize(), Sort.by(request.getSortBy()).descending());
+        String keywords = request.getKeyword() == null ? null : request.getKeyword().toLowerCase();
+        Page<TrainingCatalogVo> trainingCatalogList =
+                trainingCatalogDAO.findTrainingCatalogsByPage(keywords, request.getIsInternal(),
+                        request.getIsCertificationCourse(), request.getStatus() ? "Y" : "N", pageableSortBy);
         return helper.getResponse(trainingCatalogList.getContent(), trainingCatalogList.getTotalElements());
     }
 
     @Override
     public byte[] getAllTrainingCatalogsExcel(TrainingCatalogListingReq request, Pageable pageable) throws HRMSException {
         validator.getAllTrainingCatalogs(request);
-        Page<TrainingCatalogVo> trainingCatalogList = helper.getTrainingList(request, pageable);
+        Sort sort;
+        if (request.getSortType().equals("asc"))
+            sort = Sort.by(request.getSortBy()).ascending();
+        else
+            sort = Sort.by(request.getSortBy()).descending();
+        String keywords = request.getKeyword() == null ? null : request.getKeyword().toLowerCase();
+        List<TrainingCatalogVo> trainingCatalogList =
+                trainingCatalogDAO.findTrainingCatalogsByPageExcel(keywords, request.getIsInternal(),
+                        request.getIsCertificationCourse(), request.getStatus() ? "Y" : "N", sort);
+
         if (HRMSHelper.isNullOrEmpty(trainingCatalogList)) {
             throw new HRMSException(1500, ResponseCode.getResponseCodeMap().get(1201));
         }
@@ -114,7 +135,7 @@ public class TrainingCatalogImpl implements ITrainingCatalogService {
             borderStyle.setBorderRight(BorderStyle.MEDIUM);
 
             int rowNum = 4 + 1;
-            for (TrainingCatalogVo data : trainingCatalogList.getContent()) {
+            for (TrainingCatalogVo data : trainingCatalogList) {
                 Row row = sheet.createRow(rowNum++);
                 ExcelHelper.createCell(row, 0, data.getId(), borderStyle);
                 ExcelHelper.createCell(row, 1, data.getTrainingCode(), borderStyle);

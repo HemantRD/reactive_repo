@@ -6,6 +6,7 @@ import com.vinsys.hrms.idp.trainingcatalog.vo.SearchTopicsVo;
 import com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +34,20 @@ public interface TrainingCatalogDAO extends JpaRepository<TrainingCatalog, Long>
                                                        Boolean isInternal, Boolean isCertificationCourse,
                                                        String isActive, Pageable pageable);
 
+    @Query("select new com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo(" +
+            " t.id, t.trainingCode, t.topicName, t.competencyTypeId," +
+            " t.competencySubTypeId, t.isInternal, t.costPerPersonIndividual, t.costPerPersonGroup," +
+            " t.costPerGroup, t.minPersonInGroup, t.maxPersonInGroup, t.isCertificationCourse," +
+            " t.priority, t.durationInHours, t.remark, t.isActive)" +
+            " from TrainingCatalog t" +
+            "    where (:searchParam is null or :searchParam = '' or LOWER(t.topicName) LIKE CONCAT('%', :searchParam, '%')" +
+            "         or LOWER(t.trainingCode) LIKE CONCAT('%', :searchParam, '%'))" +
+            "    and (:isInternal is null or t.isInternal=:isInternal)" +
+            "    and (:isCertificationCourse is null or t.isCertificationCourse=:isCertificationCourse)" +
+            "    and (t.isActive=:isActive)")
+    List<TrainingCatalogVo> findTrainingCatalogsByPageExcel(@RequestParam("searchParam") String searchParam,
+                                                            Boolean isInternal, Boolean isCertificationCourse,
+                                                            String isActive, Sort sort);
 
     @Query("select new com.vinsys.hrms.idp.reports.vo.TopTrainingCourses(" +
             " a.topicName, a.trainingCode, b.name, c.name, count(*) as cnt)" +
