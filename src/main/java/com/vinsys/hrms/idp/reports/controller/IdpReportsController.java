@@ -5,6 +5,7 @@ import com.vinsys.hrms.datamodel.HRMSBaseResponse;
 import com.vinsys.hrms.exception.HRMSException;
 import com.vinsys.hrms.idp.helper.ResponseGenerator;
 import com.vinsys.hrms.idp.reports.service.IIdpReportsService;
+import com.vinsys.hrms.idp.reports.vo.ParticipantsClustersListReq;
 import com.vinsys.hrms.spring.BackendProperties;
 import com.vinsys.hrms.util.ResponseCode;
 import org.slf4j.Logger;
@@ -186,12 +187,12 @@ public class IdpReportsController {
         return response;
     }
 
-    @GetMapping("participantClusters")
-    HRMSBaseResponse<?> getParticipantsClusters(@RequestParam(required = false) String keyword,
+    @PostMapping("participantClusters")
+    HRMSBaseResponse<?> getParticipantsClusters(@RequestBody ParticipantsClustersListReq request,
                                                 @PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
         HRMSBaseResponse<?> response;
         try {
-            response = idpReportsService.getParticipantsClusters(keyword, pageable);
+            response = idpReportsService.getParticipantsClusters(request, pageable);
             response.setApplicationVersion(props.getApp_version());
         } catch (HRMSException e) {
             log.error(e.getMessage(), e);
@@ -201,5 +202,28 @@ public class IdpReportsController {
             response = ResponseGenerator.getErrorResponse(e, props.getApp_version());
         }
         return response;
+    }
+
+    @PostMapping("participantClusters/download")
+    ResponseEntity<byte[]> getParticipantsClustersExcel(@RequestBody ParticipantsClustersListReq request) {
+        try {
+            byte[] response = idpReportsService.getParticipantsClustersExcel(request);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            String fileName = "ParticipantClusters_Report.xlsx";
+            headers.setContentDisposition(
+                    ContentDisposition.builder("attachment").filename(fileName).build());
+
+            return ResponseEntity.ok().headers(headers).body(response);
+        } catch (HRMSException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(("Error: " + e.getResponseMessage()).getBytes());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseCode.getResponseCodeMap().get(1500).getBytes());
+        }
     }
 }

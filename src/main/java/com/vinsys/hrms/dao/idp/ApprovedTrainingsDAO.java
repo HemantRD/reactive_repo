@@ -5,6 +5,7 @@ import com.vinsys.hrms.idp.reports.vo.GroupVsIndividualCostSummary;
 import com.vinsys.hrms.idp.reports.vo.ParticipantsClustersVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -39,10 +40,31 @@ public interface ApprovedTrainingsDAO extends JpaRepository<ApprovedTrainings, L
             " from ApprovedTrainings a" +
             "     inner join TrainingCatalog b on b.id=a.training.id" +
             " where a.year.id=:yearId and " +
-            "   (:searchParam is null or :searchParam = '' or b.topicName LIKE CONCAT('%', :searchParam, '%'))" +
-            "  group by b.id, b.trainingCode, b.topicName, b.isInternal, b.priority, a.groupType, a.groupCode, a.cost" +
-            "   ORDER BY count(*) DESC")
-    Page<ParticipantsClustersVo> getParticipantClusters(@RequestParam("searchParam") String searchParam, Pageable pageable, Long yearId);
+            "   (:searchParam is null or :searchParam = '' or lower(b.topicName) LIKE CONCAT('%', :searchParam, '%')" +
+            "         or LOWER(b.trainingCode) LIKE CONCAT('%', :searchParam, '%'))" +
+            "    and (:isInternal is null or b.isInternal=:isInternal)" +
+            "    and (:priority is null or b.priority=:priority)" +
+            "    and (:trainingType is null or b.trainingType=:trainingType)" +
+            "  group by b.id, b.trainingCode, b.topicName, b.isInternal, b.priority, a.groupType, a.groupCode, a.cost")
+    Page<ParticipantsClustersVo> getParticipantClusters(@RequestParam("searchParam") String searchParam,
+                                                        Boolean isInternal, Integer priority, String trainingType,
+                                                        Pageable pageable, Long yearId);
+
+    @Query("select new com.vinsys.hrms.idp.reports.vo.ParticipantsClustersVo(" +
+            " b.id, b.trainingCode, b.topicName, b.isInternal, b.priority, a.groupType, a.groupCode, a.cost, count(*), " +
+            "        a.cost * count(*))" +
+            " from ApprovedTrainings a" +
+            "     inner join TrainingCatalog b on b.id=a.training.id" +
+            " where a.year.id=:yearId and " +
+            "   (:searchParam is null or :searchParam = '' or lower(b.topicName) LIKE CONCAT('%', :searchParam, '%')" +
+            "         or LOWER(b.trainingCode) LIKE CONCAT('%', :searchParam, '%'))" +
+            "    and (:isInternal is null or b.isInternal=:isInternal)" +
+            "    and (:priority is null or b.priority=:priority)" +
+            "    and (:trainingType is null or b.trainingType=:trainingType)" +
+            "  group by b.id, b.trainingCode, b.topicName, b.isInternal, b.priority, a.groupType, a.groupCode, a.cost")
+    Page<ParticipantsClustersVo> getParticipantClustersExcel(@RequestParam("searchParam") String searchParam,
+                                                             Boolean isInternal, Integer priority, String trainingType,
+                                                             Sort sort, Long yearId);
 
     @Query(value =
             "select t1.training_id as trainingId, " +

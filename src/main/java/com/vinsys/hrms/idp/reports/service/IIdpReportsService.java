@@ -23,5 +23,7 @@ public interface IIdpReportsService {
 
     HRMSBaseResponse<DashboardVo> getDashboard(String keyword, Pageable pageable) throws HRMSException;
 
-    HRMSBaseResponse<List<ParticipantsClustersVo>> getParticipantsClusters(String keyword, Pageable pageable) throws HRMSException;
+    HRMSBaseResponse<List<ParticipantsClustersVo>> getParticipantsClusters(ParticipantsClustersListReq request, Pageable pageable) throws HRMSException;
+
+    byte[] getParticipantsClustersExcel(ParticipantsClustersListReq request) throws HRMSException;
 }

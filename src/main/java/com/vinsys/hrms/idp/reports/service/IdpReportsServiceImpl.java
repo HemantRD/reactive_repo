@@ -21,7 +21,9 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -241,11 +243,25 @@ public class IdpReportsServiceImpl implements IIdpReportsService {
     }
 
     @Override
-    public HRMSBaseResponse<List<ParticipantsClustersVo>> getParticipantsClusters(String keyword, Pageable pageable) throws HRMSException {
+    public HRMSBaseResponse<List<ParticipantsClustersVo>> getParticipantsClusters(ParticipantsClustersListReq request,
+                                                                                  Pageable pageable) throws HRMSException {
+        validator.validateGetParticipantsClusters(request);
         HRMSBaseResponse<List<ParticipantsClustersVo>> response = new HRMSBaseResponse<>();
         Long yearId = iMasterYearDAO.getYearIdRunningYear();
-        String keywordU = keyword.replaceAll(" ", "%");
-        Page<ParticipantsClustersVo> participantClusters = approvedTrainingsDAO.getParticipantClusters(keywordU, pageable, yearId);
+
+        Pageable pageableSortBy;
+        if (request.getSortType().equals("asc"))
+            pageableSortBy = PageRequest.of(pageable.getPageNumber(),
+                    pageable.getPageSize(), Sort.by(request.getSortBy()).ascending());
+        else
+            pageableSortBy = PageRequest.of(pageable.getPageNumber(),
+                    pageable.getPageSize(), Sort.by(request.getSortBy()).descending());
+
+        String keyword = request.getKeyword() == null ? null : request.getKeyword().toLowerCase();
+        Page<ParticipantsClustersVo> participantClusters = approvedTrainingsDAO
+                .getParticipantClusters(keyword, request.getIsInternal(), request.getPriority(),
+                        request.getTrainingType(), pageableSortBy, yearId);
+
         List<ParticipantsClustersVo> particilantClusterlist = participantClusters.getContent();
 
         for (ParticipantsClustersVo clusterVo : particilantClusterlist) {
@@ -264,6 +280,81 @@ public class IdpReportsServiceImpl implements IIdpReportsService {
         response.setTotalRecord(participantClusters.getTotalElements());
         response.setApplicationVersion(props.getApp_version());
         return response;
+    }
+
+    @Override
+    public byte[] getParticipantsClustersExcel(ParticipantsClustersListReq request) throws HRMSException {
+        validator.validateGetParticipantsClusters(request);
+        Long yearId = iMasterYearDAO.getYearIdRunningYear();
+        Sort sort;
+        if (request.getSortType().equals("asc"))
+            sort = Sort.by(request.getSortBy()).ascending();
+        else
+            sort = Sort.by(request.getSortBy()).descending();
+
+        String keyword = request.getKeyword() == null ? null : request.getKeyword().toLowerCase();
+        Page<ParticipantsClustersVo> participantClusters = approvedTrainingsDAO
+                .getParticipantClustersExcel(keyword, request.getIsInternal(), request.getPriority(),
+                        request.getTrainingType(), sort, yearId);
+
+        List<ParticipantsClustersVo> particilantClusterlist = participantClusters.getContent();
+        for (ParticipantsClustersVo clusterVo : particilantClusterlist) {
+            List<Long> empIdList = approvedTrainingsDAO.getAllEmployeeIdsByGroupCode(clusterVo.getTrainingGroupCode(), yearId);
+            List<IdpOrganizationEmployeeView> employeesList = idpOrganizationEmployeeViewDAO.findByEmployeeIdIn(empIdList);
+            for (IdpOrganizationEmployeeView emp : employeesList) {
+                ParticipantsClusterDetailsVo detailsVo = getParticipantsClusterDetailsVo(emp);
+                clusterVo.getParticipantDetails().add(detailsVo);
+            }
+        }
+
+        if (HRMSHelper.isNullOrEmpty(participantClusters.getContent())) {
+            throw new HRMSException(1500, ResponseCode.getResponseCodeMap().get(1201));
+        }
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            String[] headers = {"id", "trainingCode", "trainingName",
+                    "isInternal", "priority", "trainingType", "trainingGroupCode",
+                    "trainingCost", "memberCount", "totalCost", "employeeId",
+                    "employeeCode", "employeeName", "designationName", "departmentName",
+                    "divisionName", "grade"};
+            String title = "ParticipantClusters_Report";
+            Sheet sheet = ExcelHelper.createInitialSheet(workbook, title, headers, logoService);
+            CellStyle borderStyle = workbook.createCellStyle();
+            borderStyle.setBorderTop(BorderStyle.MEDIUM);
+            borderStyle.setBorderBottom(BorderStyle.MEDIUM);
+            borderStyle.setBorderLeft(BorderStyle.MEDIUM);
+            borderStyle.setBorderRight(BorderStyle.MEDIUM);
+
+            int rowNum = 4 + 1;
+            for (ParticipantsClustersVo topic : participantClusters.getContent()) {
+                for (ParticipantsClusterDetailsVo participant : topic.getParticipantDetails()) {
+                    Row row = sheet.createRow(rowNum++);
+                    ExcelHelper.createCell(row, 0, topic.getId(), borderStyle);
+                    ExcelHelper.createCell(row, 1, topic.getTrainingCode(), borderStyle);
+                    ExcelHelper.createCell(row, 2, topic.getTrainingName(), borderStyle);
+                    ExcelHelper.createCell(row, 3, topic.getIsInternal(), borderStyle);
+                    ExcelHelper.createCell(row, 4, topic.getPriority(), borderStyle);
+                    ExcelHelper.createCell(row, 5, topic.getTrainingType(), borderStyle);
+                    ExcelHelper.createCell(row, 6, topic.getTrainingGroupCode(), borderStyle);
+                    ExcelHelper.createCell(row, 7, topic.getTrainingCost(), borderStyle);
+                    ExcelHelper.createCell(row, 8, topic.getMemberCount(), borderStyle);
+                    ExcelHelper.createCell(row, 9, topic.getTotalCost(), borderStyle);
+                    ExcelHelper.createCell(row, 10, participant.getEmployeeId(), borderStyle);
+                    ExcelHelper.createCell(row, 11, participant.getEmployeeCode(), borderStyle);
+                    ExcelHelper.createCell(row, 12, participant.getEmployeeName(), borderStyle);
+                    ExcelHelper.createCell(row, 13, participant.getDesignationName(), borderStyle);
+                    ExcelHelper.createCell(row, 14, participant.getDepartmentName(), borderStyle);
+                    ExcelHelper.createCell(row, 15, participant.getDivisionName(), borderStyle);
+                    ExcelHelper.createCell(row, 16, participant.getGrade(), borderStyle);
+                }
+            }
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            workbook.write(out);
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new HRMSException(1500, ResponseCode.getResponseCodeMap().get(1783));
+        }
     }
 
     private static ParticipantsClusterDetailsVo getParticipantsClusterDetailsVo(IdpOrganizationEmployeeView emp) {

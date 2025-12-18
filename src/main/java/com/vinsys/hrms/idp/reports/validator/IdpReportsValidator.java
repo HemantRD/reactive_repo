@@ -2,6 +2,7 @@ package com.vinsys.hrms.idp.reports.validator;
 
 import com.vinsys.hrms.dao.idp.TrainingCatalogDAO;
 import com.vinsys.hrms.exception.HRMSException;
+import com.vinsys.hrms.idp.reports.vo.ParticipantsClustersListReq;
 import com.vinsys.hrms.idp.utils.IdpEnums;
 import com.vinsys.hrms.util.HRMSHelper;
 import com.vinsys.hrms.util.ResponseCode;
@@ -30,6 +31,24 @@ public class IdpReportsValidator {
                 (!reportType.equals(IdpEnums.ReportType.SUMMARY.getKey()) &&
                         (!reportType.equals(IdpEnums.ReportType.DETAILED.getKey())))) {
             throw new HRMSException(1501, ResponseCode.getResponseCodeMap().get(1501) + " reportType");
+        }
+    }
+
+    public void validateGetParticipantsClusters(ParticipantsClustersListReq request) throws HRMSException {
+        if (!HRMSHelper.isNullOrEmpty(request.getSortType()) &&
+                (!request.getSortType().equals("asc") && !request.getSortType().equals("desc"))) {
+            throw new HRMSException(1501, ResponseCode.getResponseCodeMap().get(1501) + " sortType (asc/desc)");
+        }
+        if (!HRMSHelper.isNullOrEmpty(request.getSortBy()) &&
+                (!request.getSortBy().equals("memberCount") && !request.getSortBy().equals("totalCost"))) {
+            throw new HRMSException(1501, ResponseCode.getResponseCodeMap().get(1501) +
+                    " sortBy (memberCount/totalCost)");
+        }
+        if (HRMSHelper.isNullOrEmpty(request.getSortBy())) {
+            request.setSortBy("id");
+        }
+        if (HRMSHelper.isNullOrEmpty(request.getSortType())) {
+            request.setSortType("desc");
         }
     }
 }
