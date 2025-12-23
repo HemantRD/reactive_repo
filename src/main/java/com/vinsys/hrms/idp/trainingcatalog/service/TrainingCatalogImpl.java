@@ -135,8 +135,9 @@ public class TrainingCatalogImpl implements ITrainingCatalogService {
         }
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             String[] headers = {"id", "trainingCode", "topicName",
-                    "competencyTypeId", "competencySubTypeId", "isInternal", "costPerPersonIndividual",
-                    "costPerPersonGroup", "costPerGroup", "minPersonInGroup", "maxPersonInGroup",
+                    "competencyTypeId", "competencySubTypeId", "trainingTypeId", "trainingClassificationId",
+                    "isInternal", "costPerPersonIndividual", "costPerPersonGroup",
+                    "costPerGroup", "minPersonInGroup", "maxPersonInGroup",
                     "isCertificationCourse", "priority", "durationInHours", "remark", "status"};
             String title = "TrainingCatalogList_Report";
             Sheet sheet = ExcelHelper.createInitialSheet(workbook, title, headers, logoService);
@@ -154,17 +155,19 @@ public class TrainingCatalogImpl implements ITrainingCatalogService {
                 ExcelHelper.createCell(row, 2, data.getTopicName(), borderStyle);
                 ExcelHelper.createCell(row, 3, data.getCompetencyTypeId(), borderStyle);
                 ExcelHelper.createCell(row, 4, data.getCompetencySubTypeId(), borderStyle);
-                ExcelHelper.createCell(row, 5, data.getInternal(), borderStyle);
-                ExcelHelper.createCell(row, 6, data.getCostPerPersonIndividual(), borderStyle);
-                ExcelHelper.createCell(row, 7, data.getCostPerPersonGroup(), borderStyle);
-                ExcelHelper.createCell(row, 8, data.getCostPerGroup(), borderStyle);
-                ExcelHelper.createCell(row, 9, data.getMinPersonInGroup(), borderStyle);
-                ExcelHelper.createCell(row, 10, data.getMaxPersonInGroup(), borderStyle);
-                ExcelHelper.createCell(row, 11, data.getCertificationCourse(), borderStyle);
-                ExcelHelper.createCell(row, 12, data.getPriority(), borderStyle);
-                ExcelHelper.createCell(row, 13, data.getDurationInHours(), borderStyle);
-                ExcelHelper.createCell(row, 14, data.getRemark(), borderStyle);
-                ExcelHelper.createCell(row, 15, data.getStatus(), borderStyle);
+                ExcelHelper.createCell(row, 5, data.getTrainingTypeId(), borderStyle);
+                ExcelHelper.createCell(row, 6, data.getTrainingClassificationId(), borderStyle);
+                ExcelHelper.createCell(row, 7, data.getInternal(), borderStyle);
+                ExcelHelper.createCell(row, 8, data.getCostPerPersonIndividual(), borderStyle);
+                ExcelHelper.createCell(row, 9, data.getCostPerPersonGroup(), borderStyle);
+                ExcelHelper.createCell(row, 10, data.getCostPerGroup(), borderStyle);
+                ExcelHelper.createCell(row, 11, data.getMinPersonInGroup(), borderStyle);
+                ExcelHelper.createCell(row, 12, data.getMaxPersonInGroup(), borderStyle);
+                ExcelHelper.createCell(row, 13, data.getCertificationCourse(), borderStyle);
+                ExcelHelper.createCell(row, 14, data.getPriority(), borderStyle);
+                ExcelHelper.createCell(row, 15, data.getDurationInHours(), borderStyle);
+                ExcelHelper.createCell(row, 16, data.getRemark(), borderStyle);
+                ExcelHelper.createCell(row, 17, data.getStatus(), borderStyle);
             }
             for (int i = 0; i < headers.length; i++) {
                 sheet.autoSizeColumn(i);

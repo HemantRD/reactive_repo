@@ -1,13 +1,20 @@
 package com.vinsys.hrms.idp.trainingcatalog.vo;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 public class TrainingCatalogVo {
     private Long id;
     private String trainingCode;
     private String topicName;
     private Integer competencyTypeId;
     private Integer competencySubTypeId;
+    private Integer trainingTypeId;
+    private Integer trainingClassificationId;
     private Boolean isInternal;
     private Double costPerPersonIndividual;
     private Double costPerPersonGroup;
@@ -21,20 +28,19 @@ public class TrainingCatalogVo {
     private String remark;
     private Boolean status;
 
-    public TrainingCatalogVo() {
-
-    }
-
     public TrainingCatalogVo(final Long id, final String trainingCode, final String topicName,
-                             final Integer competencyTypeId, final Integer competencySubTypeId, final Boolean isInternal,
-                             final Double costPerPersonIndividual, final Double costPerPersonGroup, final Double costPerGroup,
-                             final Integer minPersonInGroup, final Integer maxPersonInGroup, final Boolean isCertificationCourse,
-                             final Integer priority, final Integer durationInHours, final String remark, final String status) {
+                             final Integer competencyTypeId, final Integer competencySubTypeId, Integer trainingTypeId,
+                             Integer trainingClassificationId, final Boolean isInternal, final Double costPerPersonIndividual,
+                             final Double costPerPersonGroup, final Double costPerGroup, final Integer minPersonInGroup,
+                             final Integer maxPersonInGroup, final Boolean isCertificationCourse, final Integer priority,
+                             final Integer durationInHours, final String remark, final String status) {
         this.id = id;
         this.trainingCode = trainingCode;
         this.topicName = topicName;
         this.competencyTypeId = competencyTypeId;
         this.competencySubTypeId = competencySubTypeId;
+        this.trainingTypeId = trainingTypeId;
+        this.trainingClassificationId = trainingClassificationId;
         this.isInternal = isInternal;
         this.costPerPersonIndividual = costPerPersonIndividual;
         this.costPerPersonGroup = costPerPersonGroup;
@@ -86,6 +92,22 @@ public class TrainingCatalogVo {
 
     public void setCompetencySubTypeId(Integer competencySubTypeId) {
         this.competencySubTypeId = competencySubTypeId;
+    }
+
+    public Integer getTrainingTypeId() {
+        return trainingTypeId;
+    }
+
+    public void setTrainingTypeId(Integer trainingTypeId) {
+        this.trainingTypeId = trainingTypeId;
+    }
+
+    public Integer getTrainingClassificationId() {
+        return trainingClassificationId;
+    }
+
+    public void setTrainingClassificationId(Integer trainingClassificationId) {
+        this.trainingClassificationId = trainingClassificationId;
     }
 
     public Boolean getInternal() {

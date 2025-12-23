@@ -48,6 +48,8 @@ public class TrainingCatalogHelper {
         trainingCatalogVo.setTopicName(dbCatalog.getTopicName());
         trainingCatalogVo.setCompetencyTypeId(dbCatalog.getCompetencyTypeId());
         trainingCatalogVo.setCompetencySubTypeId(dbCatalog.getCompetencySubTypeId());
+        trainingCatalogVo.setTrainingTypeId(dbCatalog.getTrainingTypeId());
+        trainingCatalogVo.setTrainingClassificationId(dbCatalog.getTrainingClassificationId());
         trainingCatalogVo.setInternal(dbCatalog.getInternal());
         trainingCatalogVo.setCostPerPersonIndividual(dbCatalog.getCostPerPersonIndividual());
         trainingCatalogVo.setCostPerPersonGroup(dbCatalog.getCostPerPersonGroup());
@@ -87,6 +89,8 @@ public class TrainingCatalogHelper {
         catalog.setTopicName(trainingCatalogVo.getTopicName());
         catalog.setCompetencyTypeId(trainingCatalogVo.getCompetencyTypeId());
         catalog.setCompetencySubTypeId(trainingCatalogVo.getCompetencySubTypeId());
+        catalog.setTrainingTypeId(trainingCatalogVo.getTrainingTypeId());
+        catalog.setTrainingClassificationId(trainingCatalogVo.getTrainingClassificationId());
         catalog.setInternal(trainingCatalogVo.getInternal());
         catalog.setCostPerPersonIndividual(trainingCatalogVo.getCostPerPersonIndividual());
         catalog.setCostPerPersonGroup(trainingCatalogVo.getCostPerPersonGroup());

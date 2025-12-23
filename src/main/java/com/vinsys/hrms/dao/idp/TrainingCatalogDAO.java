@@ -21,7 +21,8 @@ public interface TrainingCatalogDAO extends JpaRepository<TrainingCatalog, Long>
 
     @Query("select new com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo(" +
             " t.id, t.trainingCode, t.topicName, t.competencyTypeId," +
-            " t.competencySubTypeId, t.isInternal, t.costPerPersonIndividual, t.costPerPersonGroup," +
+            " t.competencySubTypeId, t.trainingTypeId, t.trainingClassificationId, " +
+            "    t.isInternal, t.costPerPersonIndividual, t.costPerPersonGroup," +
             " t.costPerGroup, t.minPersonInGroup, t.maxPersonInGroup, t.isCertificationCourse," +
             " t.priority, t.durationInHours, t.remark, t.isActive)" +
             " from TrainingCatalog t" +
@@ -36,7 +37,8 @@ public interface TrainingCatalogDAO extends JpaRepository<TrainingCatalog, Long>
 
     @Query("select new com.vinsys.hrms.idp.trainingcatalog.vo.TrainingCatalogVo(" +
             " t.id, t.trainingCode, t.topicName, t.competencyTypeId," +
-            " t.competencySubTypeId, t.isInternal, t.costPerPersonIndividual, t.costPerPersonGroup," +
+            " t.competencySubTypeId, , t.trainingTypeId, t.trainingClassificationId, " +
+            "  t.isInternal, t.costPerPersonIndividual, t.costPerPersonGroup," +
             " t.costPerGroup, t.minPersonInGroup, t.maxPersonInGroup, t.isCertificationCourse," +
             " t.priority, t.durationInHours, t.remark, t.isActive)" +
             " from TrainingCatalog t" +

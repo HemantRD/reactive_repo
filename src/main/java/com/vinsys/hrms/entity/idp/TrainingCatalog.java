@@ -27,6 +27,12 @@ public class TrainingCatalog extends AuditBase {
     @Column(name = "competency_sub_type_id", nullable = false)
     private Integer competencySubTypeId;
 
+    @Column(name = "training_type_id", nullable = false)
+    private Integer trainingTypeId;
+
+    @Column(name = "training_classification_id", nullable = false)
+    private Integer trainingClassificationId;
+
     @Column(name = "is_internal", nullable = false)
     private Boolean isInternal;
 
@@ -96,6 +102,23 @@ public class TrainingCatalog extends AuditBase {
 
     public void setCompetencySubTypeId(Integer competencySubTypeId) {
         this.competencySubTypeId = competencySubTypeId;
+    }
+
+
+    public Integer getTrainingTypeId() {
+        return trainingTypeId;
+    }
+
+    public void setTrainingTypeId(Integer trainingTypeId) {
+        this.trainingTypeId = trainingTypeId;
+    }
+
+    public Integer getTrainingClassificationId() {
+        return trainingClassificationId;
+    }
+
+    public void setTrainingClassificationId(Integer trainingClassificationId) {
+        this.trainingClassificationId = trainingClassificationId;
     }
 
     public Boolean getInternal() {
