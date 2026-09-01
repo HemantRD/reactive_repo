@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public class StreamChapter {
 
-    public static void main(String[] args) {
+    public static void mai1n(String[] args) {
         // find duplicate number list
         Stream<Integer> integerStream = Stream.of(2, 17, 5,
                 20, 17, 30,
@@ -71,7 +71,7 @@ public class StreamChapter {
         System.out.println(count);
     }
 
-    public static void main23(String[] args) {
+    public static void main(String[] args) {
         // joining, maxBy and minBy
         List<Dog> dogs = new ArrayList<>();
         Dog boi = new Dog("boi", 30, 6);
@@ -86,13 +86,28 @@ public class StreamChapter {
         dogs.add(aiko);
         dogs.add(zooey);
         dogs.add(charis);
-        String groups = dogs.stream().filter(r -> r.getName().startsWith("b")).map(Dog::getName).collect(Collectors.joining(","));
+
+        Map<Integer, Long> groups = dogs.stream().collect(Collectors.groupingBy(Dog::getAge,
+                Collectors.counting()));
+        System.out.println(groups);
+
+
+
+
+
+
+
+
+
+
+
+        /*String groups = dogs.stream().filter(r -> r.getName().startsWith("b")).map(Dog::getName).collect(Collectors.joining(","));
         System.out.println(groups);
         Optional<Dog> optionalDog = dogs.stream().collect(Collectors.maxBy(Comparator.comparingInt(Dog::getAge)));
         optionalDog.ifPresent(r -> System.out.println(r.getAge()));
 
         optionalDog = dogs.stream().collect(Collectors.minBy(Comparator.comparingInt(Dog::getAge)));
-        optionalDog.ifPresent(r -> System.out.println(r.getAge()));
+        optionalDog.ifPresent(r -> System.out.println(r.getAge()));*/
 
     }
 

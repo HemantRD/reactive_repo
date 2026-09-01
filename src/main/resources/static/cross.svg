@@ -1,0 +1,13 @@
+<svg width="50" height="50"
+     xmlns="http://www.w3.org/2000/svg">
+<!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
+
+    <circle r="20" cx="25" cy="25" fill="#000000"/>
+
+    <!--    <rect x="5" y="5"-->
+    <!--          width="40" height="40" style="stroke: none;" fill="#a12e00" rx="5"/>-->
+
+    <line x1="21" y1="21" x2="29" y2="29" style="stroke: #FFFFFF;"/>
+
+    <line x1="21" y1="29" x2="29" y2="21" style="stroke: #FFFFFF;"/>
+</svg>

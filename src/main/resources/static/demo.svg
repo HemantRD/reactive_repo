@@ -1,0 +1,131 @@
+<svg width="250" height="250"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>
+
+    <!-- non-rotated arrow -->
+<!--    <g id="arrow" style="stroke: black;">-->
+<!--        <rect x="10" y="10" width="10" height="10"/>-->
+<!--    </g>-->
+
+    <g id="circle" style="stroke: black;">
+        <circle cx="35" cy="25" r="5"/>
+    </g>
+    <!-- rotated around center point -->
+<!--    <use xlink:href="#arrow" transform="rotate(90, 10, 10)"/>-->
+
+    <use xlink:href="#circle" transform="rotate(50, 35, 25)"/>
+
+<!--    <use xlink:href="#circle" transform="rotate(90, 35, 30)"/>-->
+    <!--    <use xlink:href="#arrow" transform="rotate(-90, 50, 50)"/>-->
+    <!--    <use xlink:href="#arrow" transform="rotate(-150, 50 50)"/>-->
+
+    <!--    <rect x="13" y="10" width="30" height="10" fill="green" rx="2"/>-->
+
+    <!--    <g id="arrow" style="stroke: black;">-->
+    <!--        <rect x="20" y="20" width="10" height="20" rx="4"-->
+    <!--              fill="black" transform="rotate(40,30)"/>-->
+    <!--    </g>-->
+
+    <!--&lt;!&ndash;    <use xlink:href="#arrow" transform="rotate(60, 10, 10)"/>&ndash;&gt;-->
+
+    <!--    <use xlink:href="#arrow" transform="rotate(-30, 10, 10)"/>-->
+
+
+        <circle cx="25" cy="25" r="14" fill="white" style="stroke: black;"/>
+
+    <!--    <circle cx="25" cy="25" r="7" fill="white" style="stroke: green;"/>-->
+
+
+    <!--    <polygon points="0,0 200,0 0,200" fill="#4CAF50" />-->
+
+    <!--    <path d="M 0 0 L 200 0 L 0 200 Z" fill="#2196F3" />-->
+
+
+    <!--    <path d="M 12.5 25 A 10 10, 10 10, 37.5 25"-->
+    <!--          stroke="black" stroke-width="0.50" fill="none"/>-->
+
+    <!--    <line x1="37.5" y1="25" x2="27.5" y2="30" style="stroke: black;"/>-->
+
+    <!--    <path d="M20 80 C 50 20, 150 60, 200 120"-->
+    <!--          style="stroke: black; fill: none;"/>-->
+
+    <!--        &lt;!&ndash; Opaque shape &ndash;&gt;-->
+    <!--        <rect x="10" y="10" width="80" height="80" fill="red" />-->
+
+    <!--        &lt;!&ndash; Transparent shape using fill="none" and a visible stroke &ndash;&gt;-->
+    <!--        <circle cx="150" cy="50" r="40" fill="none" stroke="black" stroke-width="2" />-->
+
+    <!--        &lt;!&ndash; Semi-transparent shape (20% opacity) &ndash;&gt;-->
+    <!--        <rect x="60" y="30" width="50" height="50" fill="blue" opacity="0.2" />-->
+
+    <!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
+    <!--    <polyline-->
+    <!--            points="5,15 15,5 15,25, 5,15 " style="fill:green;"/>-->
+
+    <!--        <polyline-->
+    <!--                points="45,35 35,25 35,45,  " style="fill:red;"/>-->
+
+    <!--    <rect x="13" y="10" width="30" height="10" fill="green" rx="2"/>-->
+
+    <!--    <rect x="7" y="30" width="30" height="10" fill="red" rx="2"/>-->
+    <!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
+    <!-- -->
+    <!--    <line x1="5" y1="10" x2="45" y2="10" style="stroke: black;-->
+    <!--        stroke-width: 1;stroke-opacity: 0.5"/>-->
+
+    <!--    <rect x="50" y="10" width="20" height="40"-->
+    <!--          style="fill: none; stroke: black;"/>-->
+
+    <!--    <polyline-->
+    <!--            style="stroke-linejoin: round; stroke: black; stroke-width: 6;-->
+    <!--fill: none;"-->
+    <!--            points="90 30, 105 15, 120 30"/>-->
+
+    <!--            <ellipse cx="30" cy="80" rx="20" ry="50"-->
+    <!--                     style="stroke: black; fill: black;"/>-->
+    <!--    <ellipse cx="80" cy="80" rx="20" ry="10"-->
+    <!--             style="stroke: black; fill: none;"/>-->
+
+    <!--    <path d="M20 80 C 50 20, 150 60, 200 120"-->
+    <!--          style="stroke: black; fill: none;"/>-->
+    <!--    <ellipse cx="154" cy="154" rx="150" ry="120" style="fill: #999999;"/>-->
+    <!--    &lt;!&ndash; light blue ellipse &ndash;&gt;-->
+    <!--    <ellipse cx="152" cy="152" rx="150" ry="120" style="fill: #cceeff;"/>-->
+
+    <!--    <path d="M 302 152 A 150 120, 0, 1, 0, 2 152-->
+    <!--A 75 60, 0, 1, 0, 152 152" style="fill: #ffcccc;"/>-->
+
+    <!--    <path d="M 152 152 A 75 60, 0, 1, 1, 302 152" style="fill: #cceeff;"/>-->
+    <!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
+
+    <!--    <path d="M 10 10 L 25 10 L 25 25 L 10 25 Z" style="stroke: black; fill: none;"/>-->
+
+    <!--    <path d="M 10 25 L 25 10 L 25 30 L 30 40 Z" style="stroke: black; fill: none;"/>-->
+
+    <!--    <path d="M 10 10 L 20 10 L 20 30 M 40 40 L 55 35"-->
+    <!--          style="stroke: black;"/>-->
+    <!--    <path d="M 10 10 l 10 0 l 0 20 m 20 10 l 15 -5"-->
+    <!--          style="stroke: black;"/>-->
+
+    <!--    <path d="M 125,75 A100,50 0 0,0 225,125"/> &lt;!&ndash; b &ndash;&gt;-->
+    <!--    <path d="M 125,75 A100,50 0 0,1 225,125"/> &lt;!&ndash; c &ndash;&gt;-->
+    <!--    <path d="M 125,75 A100,50 0 1,0 225,125"/> &lt;!&ndash; d &ndash;&gt;-->
+    <!--    <path d="M 125,75 A100,50 0 1,1 225,125"/> &lt;!&ndash; e &ndash;&gt;-->
+
+    <!--    <g id="arrow">-->
+    <!--        <line x1="60" y1="50" x2="90" y2="50" style="stroke: black;"/>-->
+    <!--        <polygon points="90 50, 85 45, 85 55"/>-->
+    <!--    </g>-->
+    <!--    <use xlink:href="#arrow" transform="rotate(60,50,0)"/>-->
+
+    <!--    <path d="M 10 10 L 40 10 L 40 30 L 10 30 L 10 10"/>-->
+
+    <!--    <path d="M 125,75 A100,50 0 0,0 225,125"/> &lt;!&ndash; b &ndash;&gt;-->
+    <!--    <path d="M 125,75 A100,50 0 0,1 225,125"/> &lt;!&ndash; c &ndash;&gt;-->
+    <!--    <path d="M 125,75 A100,50 0 1,0 225,125"/> &lt;!&ndash; d &ndash;&gt;-->
+    <!--    <path d="M 125,75 A100,50 0 1,1 225,125"/> &lt;!&ndash; e &ndash;&gt;-->
+
+    <!--    &lt;!&ndash;    &lt;!&ndash;    translate is basically move&ndash;&gt;&ndash;&gt;-->
+    <!--    &lt;!&ndash;    &lt;!&ndash;    <use xlink:href="#big_rect" transform="scale(2,2)" x="0" y="10"/>&ndash;&gt;&ndash;&gt;-->
+</svg>

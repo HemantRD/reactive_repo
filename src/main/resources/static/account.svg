@@ -1,0 +1,17 @@
+<svg width="50" height="50"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
+    <g id="big_rect">
+        <circle cx="8.5" cy="7" r="2.0"
+                style="stroke: #000000;" fill="#FFFFFF"
+                stroke-width="0.5"/>
+        <rect x="15" y="5.5"
+              width="30" height="3.2" style="stroke: #000000;" fill="#FFFFFF"
+              stroke-width="0.45"/>
+    </g>
+    <use xlink:href="#big_rect" transform="translate(0,12)"/>
+    <use xlink:href="#big_rect" transform="translate(0,24)"/>
+    <use xlink:href="#big_rect" transform="translate(0,36)"/>
+</svg>

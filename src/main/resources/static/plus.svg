@@ -1,0 +1,12 @@
+<svg width="50" height="50"
+     xmlns="http://www.w3.org/2000/svg">
+    <!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
+
+    <rect x="5" y="5"
+          width="40" height="40" style="stroke: none;" fill="#36454F" rx="5"/>
+
+    <line x1="20" y1="25" x2="30" y2="25" style="stroke: #ffffff;"/>
+
+    <line x1="25" y1="20" x2="25" y2="30" style="stroke: #ffffff;"/>
+
+</svg>

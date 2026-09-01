@@ -1,0 +1,8 @@
+<svg width="50" height="50"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <polyline points="10,30 40,30 25,45 10,30 "
+              style="fill:green;"/>
+    <rect x="20" y="8" width="10" height="25" fill="green" rx="2"/>
+    <circle cx="25" cy="25" r="23" fill="none" stroke="#cbcbcb"/>
+</svg>

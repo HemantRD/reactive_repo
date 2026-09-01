@@ -1,0 +1,12 @@
+<svg width="51" height="51"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
+
+    <polyline
+            points="5,50 5,30 25,15 45,30 45,50 30,50 30,35 20,35 20,50 5,50 "
+            style="fill:black;" stroke-width="0.3" stroke="black"/>
+    <polyline
+            points="2,30 25,12 48,30 48,23 42,18 42,5 35,5 35,12 25,5 2,23 2,30 "
+            style="fill:black;" stroke-width="0.3" stroke="black"/>
+</svg>

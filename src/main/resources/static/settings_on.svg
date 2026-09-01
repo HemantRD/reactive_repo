@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="256" height="256">
+
+    <rect width="512" height="512" style="stroke: black;" fill="#FFFFFF"/>
+    <!-- Step 1: reusable tooth shape (one rounded rectangle, pointing "up") -->
+    <defs>
+        <rect id="tooth" x="226" y="10" width="60" height="130" rx="18" fill="#000000"/>
+    </defs>
+
+    <!-- Step 2: everything that spins goes inside this group -->
+    <g id="gear">
+
+        <!-- Step 3: the ring — a plain circle with no fill, just a thick stroke.
+             A stroke straddles the outline, so a fill-less circle + wide stroke IS a ring.
+             radius = midpoint between outer(150) and inner(65) edges = 107.5
+             stroke-width = the gap between them = 150 - 65 = 85 -->
+        <circle cx="256" cy="256" r="107.5" fill="none"
+                style="stroke: black;" stroke="#ffffff" stroke-width="85"/>
+
+        <!-- Step 4: stamp the tooth 8 times, rotating 45° more each time -->
+        <use href="#tooth" transform="rotate(0   256 256)"/>
+        <use href="#tooth" transform="rotate(45  256 256)"/>
+        <use href="#tooth" transform="rotate(90  256 256)"/>
+        <use href="#tooth" transform="rotate(135 256 256)"/>
+        <use href="#tooth" transform="rotate(180 256 256)"/>
+        <use href="#tooth" transform="rotate(225 256 256)"/>
+        <use href="#tooth" transform="rotate(270 256 256)"/>
+        <use href="#tooth" transform="rotate(315 256 256)"/>
+
+        <!-- Step 5: spin the whole group forever -->
+        <animateTransform
+                attributeName="transform"
+                type="rotate"
+                from="0 256 256"
+                to="360 256 256"
+                dur="3s"
+                repeatCount="0.05"
+        />
+    </g>
+</svg>
