@@ -1,39 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="256" height="256">
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="50" height="50">
 
-    <rect width="512" height="512" style="stroke: black;" fill="#FFFFFF"/>
+    <!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
+
+    <!--    <svg width="50" height="50"-->
+    <!--         xmlns="http://www.w3.org/2000/svg"-->
+    <!--         xmlns:xlink="http://www.w3.org/1999/xlink">    -->
+
     <!-- Step 1: reusable tooth shape (one rounded rectangle, pointing "up") -->
     <defs>
-        <rect id="tooth" x="226" y="10" width="60" height="130" rx="18" fill="#000000"/>
+        <rect id="tooth" x="21" y="2" width="8" height="12"
+              rx="2" fill="#000000" style="stroke: black;"
+              stroke-width="0.45"/>
     </defs>
 
     <!-- Step 2: everything that spins goes inside this group -->
     <g id="gear">
 
-        <!-- Step 3: the ring — a plain circle with no fill, just a thick stroke.
-             A stroke straddles the outline, so a fill-less circle + wide stroke IS a ring.
-             radius = midpoint between outer(150) and inner(65) edges = 107.5
-             stroke-width = the gap between them = 150 - 65 = 85 -->
-        <circle cx="256" cy="256" r="107.5" fill="none"
-                style="stroke: black;" stroke="#ffffff" stroke-width="85"/>
+        <!-- Step 3: the ring — one circle with a smaller circle cut out (evenodd hole) -->
+
 
         <!-- Step 4: stamp the tooth 8 times, rotating 45° more each time -->
-        <use href="#tooth" transform="rotate(0   256 256)"/>
-        <use href="#tooth" transform="rotate(45  256 256)"/>
-        <use href="#tooth" transform="rotate(90  256 256)"/>
-        <use href="#tooth" transform="rotate(135 256 256)"/>
-        <use href="#tooth" transform="rotate(180 256 256)"/>
-        <use href="#tooth" transform="rotate(225 256 256)"/>
-        <use href="#tooth" transform="rotate(270 256 256)"/>
-        <use href="#tooth" transform="rotate(315 256 256)"/>
+        <use href="#tooth" transform="rotate(0   25 225)"/>
+        <use href="#tooth" transform="rotate(45  25 25)"/>
+        <use href="#tooth" transform="rotate(90  25 25)"/>
+        <use href="#tooth" transform="rotate(135 25 25)"/>
+        <use href="#tooth" transform="rotate(180 25 25)"/>
+        <use href="#tooth" transform="rotate(225 25 25)"/>
+        <use href="#tooth" transform="rotate(270 25 25)"/>
+        <use href="#tooth" transform="rotate(315 25 25)"/>
 
-        <!-- Step 5: spin the whole group forever -->
-        <animateTransform
-                attributeName="transform"
-                type="rotate"
-                from="0 256 256"
-                to="360 256 256"
-                dur="3s"
-                repeatCount="0.05"
-        />
+        <!--        <circle cx="25" cy="25" r="15" fill="white"-->
+        <!--                style="stroke: black;" stroke-width="0.45"/>-->
+        <circle cx="25" cy="25" r="11" fill="white"
+                style="stroke: black;" stroke-width="10"/>
+
+        <!--        <circle cx="256" cy="256" r="150" fill="white"-->
+        <!--                style="stroke: black;" stroke-width="1"/>-->
+        <!--        <circle cx="256" cy="256" r="65" fill="white"-->
+        <!--                style="stroke: black;" stroke-width="1"/>-->
+
+
+        <!--        fill="white"-->
+        <!--        style="stroke: black;" stroke="#ffffff" stroke-width="85"-->
+
+
+        <!--                <path-->
+        <!--                        fill="#ffffff"-->
+        <!--                        style="stroke: black;"-->
+        <!--                        fill-rule="evenodd"-->
+        <!--                        d="M256,256 m150,0 a150,150 0 1,0 -300,0 a150,150 0 1,0 300,0-->
+        <!--                 M256,256 m65,0  a65,65   0 1,0 -130,0 a65,65   0 1,0 130,0"-->
+        <!--                />-->
+        <!--        &lt;!&ndash; Step 5: spin the whole group forever &ndash;&gt;-->
+        <!--        <animateTransform-->
+        <!--                attributeName="transform"-->
+        <!--                type="rotate"-->
+        <!--                from="0 25 25"-->
+        <!--                to="360 25 25"-->
+        <!--                dur="3s"-->
+        <!--                repeatCount="0.05"-->
+        <!--        />-->
     </g>
 </svg>

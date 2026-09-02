@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg"
-     width="512" height="512">
+     width="50" height="50">
 
-    <rect width="512" height="512" style="stroke: black;" fill="#FFFFFF"/>
+    <!--    <rect width="50" height="50" style="stroke: black;" fill="#FFFFFF"/>-->
 
     <!--    <svg width="50" height="50"-->
     <!--         xmlns="http://www.w3.org/2000/svg"-->
@@ -9,8 +9,9 @@
 
     <!-- Step 1: reusable tooth shape (one rounded rectangle, pointing "up") -->
     <defs>
-        <rect id="tooth" x="226" y="10" width="60" height="130"
-              rx="18" fill="#ffffff" style="stroke: black;"/>
+        <rect id="tooth" x="21" y="2" width="8" height="12"
+              rx="2" fill="#ffffff" style="stroke: black;"
+              stroke-width="0.30"/>
     </defs>
 
     <!-- Step 2: everything that spins goes inside this group -->
@@ -20,19 +21,25 @@
 
 
         <!-- Step 4: stamp the tooth 8 times, rotating 45° more each time -->
-        <use href="#tooth" transform="rotate(0   256 256)"/>
-        <use href="#tooth" transform="rotate(45  256 256)"/>
-        <use href="#tooth" transform="rotate(90  256 256)"/>
-        <use href="#tooth" transform="rotate(135 256 256)"/>
-        <use href="#tooth" transform="rotate(180 256 256)"/>
-        <use href="#tooth" transform="rotate(225 256 256)"/>
-        <use href="#tooth" transform="rotate(270 256 256)"/>
-        <use href="#tooth" transform="rotate(315 256 256)"/>
+        <use href="#tooth" transform="rotate(0   25 225)"/>
+        <use href="#tooth" transform="rotate(45  25 25)"/>
+        <use href="#tooth" transform="rotate(90  25 25)"/>
+        <use href="#tooth" transform="rotate(135 25 25)"/>
+        <use href="#tooth" transform="rotate(180 25 25)"/>
+        <use href="#tooth" transform="rotate(225 25 25)"/>
+        <use href="#tooth" transform="rotate(270 25 25)"/>
+        <use href="#tooth" transform="rotate(315 25 25)"/>
 
-        <circle cx="256" cy="256" r="150" fill="white"
-                style="stroke: black;" stroke-width="1"/>
-        <circle cx="256" cy="256" r="65" fill="white"
-                style="stroke: black;" stroke-width="1"/>
+        <circle cx="25" cy="25" r="15" fill="white"
+                style="stroke: black;" stroke-width="0.30"/>
+        <circle cx="25" cy="25" r="6" fill="white"
+                style="stroke: black;" stroke-width="0.30"/>
+
+        <!--        <circle cx="256" cy="256" r="150" fill="white"-->
+        <!--                style="stroke: black;" stroke-width="1"/>-->
+        <!--        <circle cx="256" cy="256" r="65" fill="white"-->
+        <!--                style="stroke: black;" stroke-width="1"/>-->
+
 
         <!--        fill="white"-->
         <!--        style="stroke: black;" stroke="#ffffff" stroke-width="85"-->
