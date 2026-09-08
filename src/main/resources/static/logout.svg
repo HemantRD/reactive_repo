@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+    <!-- door frame -->
+    <path d="M22 8 H14 Q12 8 12 10 V40 Q12 42 14 42 H22"
+          fill="none" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- arrow line -->
+    <line x1="20" y1="25" x2="40" y2="25" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    <!-- arrow head -->
+    <path d="M33 18 L40 25 L33 32" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

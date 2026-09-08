@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+    <!-- shackle -->
+    <path d="M17 22 V16 Q17 8 25 8 Q33 8 33 16 V22"
+          fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    <!-- body -->
+    <rect x="12" y="22" width="26" height="20" rx="3" fill="#333"/>
+    <!-- keyhole -->
+    <circle cx="25" cy="30" r="2.5" fill="#fff"/>
+    <rect x="23.5" y="30" width="3" height="6" fill="#fff"/>
+</svg>
