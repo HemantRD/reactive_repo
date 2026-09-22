@@ -30,7 +30,7 @@
         <use href="#tooth" transform="rotate(270 25 25)"/>
         <use href="#tooth" transform="rotate(315 25 25)"/>
 
-        <circle cx="25" cy="25" r="12.6" fill="white"
+        <circle cx="25" cy="25" r="13.2" fill="white"
                 style="stroke: black;" stroke-width="0.30"/>
         <circle cx="25" cy="25" r="6" fill="white"
                 style="stroke: black;" stroke-width="0.30"/>
